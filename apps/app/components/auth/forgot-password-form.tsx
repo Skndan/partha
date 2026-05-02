@@ -23,10 +23,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@workspace/ui/components/form";
-import { Alert, AlertDescription } from "../ui/alert";
+import { Alert, AlertDescription } from "@workspace/ui/components/alert";
 import { Loader, Terminal } from "lucide-react";
 import { toast } from "sonner";
 import type * as React from "react";
+
+import { AuthBrandLogo } from "@/components/auth/auth-brand-logo";
 
 const ForgotPasswordSchema = z.object({
   email: z.string().email("Enter a valid email"),
@@ -74,7 +76,7 @@ export function ForgotPasswordForm({
 
       setMessage(
         data.message ??
-          "If this email exists in our system, check your inbox for the reset link."
+        "If this email exists in our system, check your inbox for the reset link."
       );
       toast.success("Check your email for the reset link.");
     } catch (err) {
@@ -85,9 +87,17 @@ export function ForgotPasswordForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
+    <div
+      className={cn(
+        "flex min-h-svh w-full flex-col items-center justify-center gap-8 p-6",
+        className,
+      )}
+      {...props}
+    >
+      <AuthBrandLogo />
+
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
           <CardTitle>Forgot password</CardTitle>
           <CardDescription>
             Enter your email and we&apos;ll send a reset link.

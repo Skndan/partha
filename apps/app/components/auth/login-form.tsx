@@ -30,6 +30,8 @@ import { toast } from "sonner";
 import { PasswordInput } from "@workspace/ui/components/password-input";
 import { useSearchParams } from "next/navigation";
 
+import { AuthBrandLogo } from "@/components/auth/auth-brand-logo";
+
 const LoginSchema = z.object({
   email: z.string().email("Enter a valid email"),
   password: z.string().min(1, "Password is required"),
@@ -102,13 +104,21 @@ export function LoginForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle>Sign in</CardTitle>
-          <CardDescription>
-            Use your email and password, or continue with Google.
-          </CardDescription>
+    <div
+      className={cn("mx-auto flex w-full max-w-md flex-col gap-6", className)}
+      {...props}
+    >
+      {/* <AuthBrandLogo className="self-center sm:self-start" /> */}
+
+      <Card className="shadow-sm">
+        <CardHeader className="space-y-4 text-center sm:text-left">
+
+          <div className="space-y-1.5">
+            <CardTitle className="text-xl">Sign in</CardTitle>
+            <CardDescription>
+              Use your email and password, or continue with Google.
+            </CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
           <Form {...form}>

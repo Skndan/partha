@@ -19,6 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Loader, Terminal } from "lucide-react";
 import { toast } from "sonner";
 import { PasswordInput } from "../ui/password-input";
+import { AuthBrandLogo } from "@/components/auth/auth-brand-logo";
 
 export function SignupForm({
   className,
@@ -72,9 +73,17 @@ export function SignupForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
+    <div
+      className={cn(
+        "flex min-h-svh w-full flex-col items-center justify-center gap-8 p-6",
+        className,
+      )}
+      {...props}
+    >
+      <AuthBrandLogo />
+
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
           <CardTitle>Create an account</CardTitle>
           <CardDescription>Get started with your new account</CardDescription>
         </CardHeader>
