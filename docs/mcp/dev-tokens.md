@@ -1,6 +1,6 @@
 # Dev tokens
 
-Development workflows can bypass interactive OAuth using **local-only** helpers.
+For local Partha development, these flows bypass interactive OAuth using **local-only** helpers (never enabled in production).
 
 > These flows must stay disabled in production builds — verify `NODE_ENV` guards in `app/api/dev/mcp/token/route.ts`.
 

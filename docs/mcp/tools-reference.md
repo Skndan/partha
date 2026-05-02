@@ -1,6 +1,6 @@
 # MCP tools reference
 
-Authoritative definitions live in `lib/mcp/server.ts`. Update this table when tools change.
+Reference for tools exposed by Partha’s MCP server. Authoritative definitions live in `lib/mcp/server.ts`. Update this table when tools change.
 
 | Tool | Description | Scopes / notes |
 |------|-------------|----------------|

@@ -1,5 +1,7 @@
 # Notifications & activity
 
+Partha uses notifications and structured activity events so collaborators see what changed inside a workspace.
+
 ## Notifications
 
 - Table `notification` captures user-targeted signals inside a workspace (read/unread tracking + references to entities).

@@ -1,6 +1,10 @@
 # Partha documentation
 
-Markdown-only docs for the Partha product and MCP server. Browse here in the repo or wire `NEXT_PUBLIC_GITHUB_DOCS_BASE` so the `/docs` marketing page links to GitHub-rendered files.
+**Partha** helps teams **plan, analyze, reach, track, harness, and accelerate** delivery inside workspace-scoped teams, projects, milestones, and issues—with MCP so agents can participate safely.
+
+Markdown-only docs for the Partha product and MCP server. Browse here in the repo or wire `NEXT_PUBLIC_GITHUB_DOCS_BASE` so the `/docs` marketing page links to GitHub-rendered files. New contributors usually start at the repository **[README](../README.md)** (overview, stack, and quick start), then return here for deeper topics.
+
+**Repository:** https://github.com/Skndan/partha
 
 ## Index
 
@@ -9,6 +13,7 @@ Markdown-only docs for the Partha product and MCP server. Browse here in the rep
 | Document | Description |
 |----------|-------------|
 | [README.md](./README.md) | This index |
+| [Repository](https://github.com/Skndan/partha) | Source on GitHub |
 | [getting-started.md](./getting-started.md) | Install, env, database, first workspace |
 | [deploy.md](./deploy.md) | Docker / TLS deployment |
 | [contributing.md](./contributing.md) | Conventions and tooling |

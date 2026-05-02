@@ -1,5 +1,7 @@
 # MCP scopes
 
+Partha’s MCP server maps OAuth scopes to tool families as follows.
+
 Supported scopes:
 
 | Scope | Meaning |

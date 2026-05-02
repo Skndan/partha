@@ -1,6 +1,6 @@
 # MCP list pagination
 
-List-style tools accept shared pagination inputs:
+Partha MCP list-style tools accept shared pagination inputs:
 
 ## Inputs
 

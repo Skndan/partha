@@ -1,5 +1,7 @@
 # Roadmap
 
+Near-term product direction for Partha beyond what is already shipped.
+
 Partha today ships **workspace collaboration** + **MCP**. This roadmap captures the next layers that turn Partha into an operating suite for SaaS builders.
 
 ## Now (shipped)

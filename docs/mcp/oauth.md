@@ -1,5 +1,7 @@
 # MCP OAuth (authorization code + PKCE)
 
+Partha implements MCP OAuth 2.0 authorization-code flow with PKCE so hosted MCP clients can obtain scoped access tokens for `/api/mcp`.
+
 ## Participants
 
 - **Resource owner** — Partha user signing into the web app.

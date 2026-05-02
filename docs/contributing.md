@@ -1,5 +1,7 @@
 # Contributing
 
+Thanks for improving Partha. Clone [Skndan/partha](https://github.com/Skndan/partha), follow **[getting-started](./getting-started.md)** (install and env), and use this page for day-to-day conventions. Broader orientation lives in the root **[README](../README.md)** and the **[documentation index](./README.md)**.
+
 ## Commits
 
 Use [Conventional Commits](https://www.conventionalcommits.org/) (`type(scope): subject`). Allowed types follow project guidelines (feat, fix, docs, style, refactor, perf, test, build, ci, chore).

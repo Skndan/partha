@@ -1,5 +1,7 @@
 # Security
 
+This document summarizes how Partha treats authentication sessions, MCP OAuth tokens, development-only helpers, and operational secrets.
+
 ## Sessions & authentication
 
 - Sessions are issued by **Better Auth**. Protect secrets (`BETTER_AUTH_SECRET`, provider client secrets).

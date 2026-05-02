@@ -1,14 +1,16 @@
 # MCP client: OpenClaw
 
-OpenClaw-compatible agents typically consume MCP servers via HTTP or stdio transports depending on runtime.
+Partha can serve OpenClaw-compatible agents over HTTP or stdio depending on how the runtime attaches MCP servers.
 
 ## HTTP transport
 
-Point your OpenClaw MCP transport configuration at:
+Point your OpenClaw MCP transport configuration at Partha’s MCP endpoint—for production:
 
 ```text
 https://your-domain.com/api/mcp
 ```
+
+For local `@partha/app` development (`bun run dev:app`), use `http://localhost:4000/api/mcp`.
 
 Follow OpenClaw’s documentation for:
 

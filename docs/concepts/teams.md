@@ -1,6 +1,6 @@
 # Teams
 
-**Teams** group people and work inside a workspace. Each team has a human-readable **name** and short **key** (normalized uppercase in MCP mutations).
+In Partha, **teams** group people and work inside a workspace. Each team has a human-readable **name** and short **key** (normalized uppercase in MCP mutations).
 
 ## Data model
 

@@ -1,6 +1,6 @@
 # Issues
 
-**Issues** are the atomic delivery unit: titles, rich descriptions, statuses, priorities, labels, assignees, relations, comments, sub-issues, and activity.
+In Partha, **issues** are the atomic delivery unit: titles, rich descriptions, statuses, priorities, labels, assignees, relations, comments, sub-issues, and activity.
 
 ## Data model (selected)
 

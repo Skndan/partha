@@ -1,6 +1,6 @@
 # Projects
 
-**Projects** capture initiative-sized buckets of work. They may optionally belong to a **team** and carry a **status** aligned with `project_status_enum` in Drizzle.
+In Partha, **projects** capture initiative-sized buckets of work. They may optionally belong to a **team** and carry a **status** aligned with `project_status_enum` in Drizzle.
 
 ## Data model
 

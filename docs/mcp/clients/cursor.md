@@ -1,6 +1,6 @@
 # MCP client: Cursor (HTTP)
 
-Cursor supports MCP servers over HTTP with interactive OAuth.
+Use this flow to connect **Cursor** to Partha’s HTTP MCP endpoint (`/api/mcp`) with interactive OAuth (Cursor supports MCP over HTTP with built-in auth flows).
 
 ## Config (`~/.cursor/mcp.json`)
 
@@ -8,7 +8,7 @@ Cursor supports MCP servers over HTTP with interactive OAuth.
 {
   "mcpServers": {
     "partha-local": {
-      "url": "http://localhost:3000/api/mcp"
+      "url": "http://localhost:4000/api/mcp"
     }
   }
 }

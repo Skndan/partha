@@ -1,6 +1,6 @@
 # Deploy Partha (Docker)
 
-Guide for running Partha with Docker, Postgres, Nginx, and TLS.
+This guide covers production-style deployment of the Partha web app with Docker, Postgres, Nginx, and TLS. For local development, see [getting-started.md](./getting-started.md).
 
 ## Prerequisites
 

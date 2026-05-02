@@ -1,6 +1,6 @@
 # Workspaces
 
-A **workspace** is the top-level tenant boundary: branding, members, teams, projects, and issues all hang off `workspace.id`.
+In **Partha**, a **workspace** is the top-level tenant boundary: branding, members, teams, projects, and issues all hang off `workspace.id`.
 
 ## Data model
 

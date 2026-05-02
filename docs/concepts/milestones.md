@@ -1,6 +1,6 @@
 # Milestones
 
-**Milestones** represent checkpoints or releases. They are workspace-scoped and optionally tied to a **project**.
+In Partha, **milestones** represent checkpoints or releases. They are workspace-scoped and optionally tied to a **project**.
 
 ## Data model
 

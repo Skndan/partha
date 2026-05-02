@@ -1,6 +1,6 @@
 # MCP client: Claude Desktop
 
-Claude Desktop MCP configurations vary by release; the stable concept is to register Partha as an HTTP MCP endpoint alongside other servers.
+Register Partha as an HTTP MCP endpoint (`/api/mcp`) alongside other servers; config file locations vary by Claude Desktop release and OS. Complete OAuth when the client opens a browser for login—same pattern as Cursor’s hosted MCP.
 
 ## Pattern
 

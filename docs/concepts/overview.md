@@ -1,6 +1,6 @@
 # Concepts overview
 
-Partha models delivery as nested scopes inside a **workspace**:
+These pages describe how **Partha** structures product data and UI. Partha models delivery as nested scopes inside a **workspace**:
 
 ```text
 Workspace

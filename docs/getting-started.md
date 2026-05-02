@@ -1,5 +1,7 @@
 # Getting started
 
+This guide walks you through running **Partha** locally from the [Skndan/partha](https://github.com/Skndan/partha) monorepo. For the product overview, see the [repository README](../README.md) or [concepts overview](./concepts/overview.md).
+
 ## Prerequisites
 
 - [Bun](https://bun.sh/) installed
@@ -9,7 +11,7 @@
 ## Clone and install
 
 ```bash
-git clone <your-fork-or-repo-url>
+git clone https://github.com/Skndan/partha.git
 cd partha
 bun install
 ```
@@ -26,7 +28,7 @@ Minimum variables (see `.env.example` for full list):
 |----------|---------|
 | `DATABASE_URL` | Postgres connection string |
 | `BETTER_AUTH_SECRET` | Secret for session/crypto |
-| `BETTER_AUTH_URL` | Public origin (e.g. `http://localhost:3000`) |
+| `BETTER_AUTH_URL` | Public origin (e.g. `http://localhost:4000` for local `@partha/app`) |
 | `NEXT_PUBLIC_URL` | Same origin, no trailing slash |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | If using Google sign-in |
 | `R2_*` | Only if using `/api/upload` with Cloudflare R2 |
@@ -52,7 +54,7 @@ For migration workflows, use `db:generate` / `db:migrate` as documented in `pack
 bun dev
 ```
 
-Visit `http://localhost:3000`.
+Open **`http://localhost:4000`** when running the main app (`bun run dev:app`). With `bun dev`, Turborepo may start multiple apps—use the URLs printed in the terminal (see root [README](../README.md)).
 
 ## First workspace
 
