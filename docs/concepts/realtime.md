@@ -1,0 +1,14 @@
+# Realtime
+
+Partha listens for workspace-level server-sent events (SSE) so tables and summaries stay warm without manual reloads.
+
+## Implementation
+
+- Component: `components/linear/workspace-realtime-listener.tsx`
+- Mounted from `app/[slug]/layout.tsx`
+- Events route pattern: `/api/workspaces/{slug}/events` (see codebase for exact handler)
+
+## Operational notes
+
+- SSE connections should respect auth middleware — verify session before streaming.
+- Fallback when realtime unavailable: manual refresh / router reload.

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignore": [
+    ".next/**",
+    "node_modules/**",
+    "tests/**",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
+  "tags": [
+    "-lintignore"
+  ],
+  "ignoreIssues": {
+    "lib/storage.ts": [
+      "exports",
+      "types"
+    ]
+  }
+}

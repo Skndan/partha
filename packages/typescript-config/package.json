@@ -2,6 +2,9 @@
   "name": "@workspace/typescript-config",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "build": "echo \"@workspace/typescript-config: no build step\""
+  },
   "license": "PROPRIETARY",
   "publishConfig": {
     "access": "public"

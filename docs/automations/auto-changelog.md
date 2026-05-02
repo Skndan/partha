@@ -1,0 +1,19 @@
+> **Status: Planned.** APIs and UI are subject to change.
+
+# Automation: Auto changelog
+
+Combine Git history, PR titles, Partha issue identifiers, and MCP actions to draft release notes.
+
+## Inputs
+
+- Merge commits / tags from GitHub integration.
+- Issue + milestone transitions inside Partha.
+
+## Outputs
+
+- Markdown changelog snippets per workspace release channel.
+- Optional pull request back to documentation repos.
+
+## Guardrails
+
+Human review remains default — automation proposes, humans approve.

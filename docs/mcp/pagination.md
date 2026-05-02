@@ -1,0 +1,27 @@
+# MCP list pagination
+
+List-style tools accept shared pagination inputs:
+
+## Inputs
+
+- `limit` — default `25`, maximum `100`
+- **Cursor mode** — pass `cursor`
+- **Offset mode** — pass `offset` or `page`
+
+Do **not** combine `cursor` with `offset` / `page`.
+
+## Response shape
+
+Responses embed collections (`teams`, `projects`, `issues`, etc.) alongside `pageInfo`:
+
+| Field | Description |
+|-------|-------------|
+| `mode` | `"cursor"` or `"offset"` |
+| `limit` | Page size |
+| `offset` | Zero-based offset when applicable |
+| `page` | 1-based page when derived |
+| `hasMore` | Another page exists |
+| `nextCursor` | Cursor for next page |
+| `total` | Total hits (offset mode only, when implemented) |
+
+Concrete pagination helpers live beside tool implementations in `lib/mcp/server.ts`.

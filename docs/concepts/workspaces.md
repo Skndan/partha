@@ -1,0 +1,18 @@
+# Workspaces
+
+A **workspace** is the top-level tenant boundary: branding, members, teams, projects, and issues all hang off `workspace.id`.
+
+## Data model
+
+- Table `workspace` (`lib/db/schema.ts`) — `name`, `slug`, `createdBy`, timestamps.
+- Membership via `workspace_member` with `workspace_role`: `owner` | `admin` | `member`.
+
+## UX
+
+- Creation & invites: `app/onboarding/page.tsx`, components under `components/onboarding/`.
+- After sign-in, `/` redirects to the user’s first workspace slug or onboarding.
+
+## MCP
+
+- Tokens may bind to a single workspace (`workspace_slug` at authorize time).
+- Tools such as `list_teams` require resolving that workspace — see [`docs/mcp/scopes.md`](../mcp/scopes.md).

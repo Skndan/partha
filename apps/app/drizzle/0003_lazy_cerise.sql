@@ -1,0 +1,2 @@
+DROP INDEX "issue_workspace_identifier_unique";--> statement-breakpoint
+CREATE UNIQUE INDEX "issue_workspace_project_identifier_unique" ON "issue" USING btree ("workspace_id","project_id","identifier");

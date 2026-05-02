@@ -4,10 +4,20 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
+    "build:app": "turbo build --filter=@partha/app",
+    "build:site": "turbo build --filter=@partha/site",
     "dev": "turbo dev",
+    "dev:app": "turbo dev --filter=@partha/app",
+    "dev:site": "turbo dev --filter=@partha/site",
     "lint": "turbo lint",
     "format": "turbo format",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "start:app": "turbo start --filter=@partha/app",
+    "start:site": "turbo start --filter=@partha/site",
+    "db:generate": "turbo db:generate --filter=@partha/app",
+    "db:migrate": "turbo db:migrate --filter=@partha/app",
+    "db:push": "turbo db:push --filter=@partha/app",
+    "db:studio": "turbo db:studio --filter=@partha/app"
   },
   "devDependencies": {
     "@workspace/eslint-config": "workspace:*",

@@ -1,0 +1,36 @@
+# Dev tokens
+
+Development workflows can bypass interactive OAuth using **local-only** helpers.
+
+> These flows must stay disabled in production builds — verify `NODE_ENV` guards in `app/api/dev/mcp/token/route.ts`.
+
+## CLI helper
+
+```bash
+bun run mcp:token -- --user-id <user_id>
+# or
+bun run mcp:token -- --email user@example.com
+```
+
+Optional flags:
+
+```bash
+--client-id local-dev-cli
+--workspace-slug <slug>
+--scope "mcp:read workspace:read"
+```
+
+Implementation: `scripts/mcp-dev-token.ts`.
+
+## Dev UI
+
+While signed in locally, open `/dev/mcp-token` and generate a token (`components/mcp/dev-token-generator.tsx`).
+
+## Export for stdio
+
+```bash
+export MCP_ACCESS_TOKEN="mcp_at_..."
+bun run mcp:stdio
+```
+
+See also [clients/stdio.md](./clients/stdio.md).

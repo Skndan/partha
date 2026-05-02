@@ -1,0 +1,15 @@
+> **Status: Planned.** APIs and UI are subject to change.
+
+# Automation: Commit tracking
+
+Correlate commits with Partha issues for traceability and changelog accuracy.
+
+## Mechanics (planned)
+
+- Parse commit messages for issue identifiers (`ABC-123`).
+- GitHub webhook ingestion updating issue activity timelines.
+- Alerts when commits land without linked issues (policy violations).
+
+## Dependencies
+
+Requires [`../integrations/github.md`](../integrations/github.md).

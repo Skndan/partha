@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "type": "module",
   "private": true,
+  "scripts": {
+    "build": "echo \"@workspace/eslint-config: no build step\""
+  },
   "exports": {
     "./base": "./base.js",
     "./next-js": "./next.js",

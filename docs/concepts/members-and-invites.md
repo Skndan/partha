@@ -1,0 +1,20 @@
+# Members & invites
+
+## Workspace membership
+
+- Table `workspace_member` binds `user_id` ↔ `workspace_id` with `workspace_role`.
+- UI: `app/[slug]/members/page.tsx` with supporting components for invites (`components/linear/invite-member-dialog.tsx`, `invite-member-form.tsx`).
+
+## Invites
+
+- `workspace_invite` stores email/token/expiry/role until acceptance during onboarding or membership flows.
+
+## Roles
+
+| Role   | Typical capability |
+|--------|--------------------|
+| owner  | Full control including billing hooks (future) |
+| admin  |Invite/manage members, mutate most workspace entities |
+| member | Collaborate on assigned work |
+
+Exact enforcement lives in server actions / route handlers — treat this table as intent; verify code paths when hardening permissions.
