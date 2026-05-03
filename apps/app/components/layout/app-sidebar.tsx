@@ -7,12 +7,7 @@ import {
   Briefcase,
   ChevronRight,
   FolderKanban,
-  Goal,
-  Inbox,
   LayoutDashboard,
-  Layers,
-  MoreHorizontal,
-  ScanSearch,
   Users,
   UsersRound,
 } from 'lucide-react'
