@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { PencilIcon, PlusIcon } from "lucide-react";
+import { useQueryStates } from "nuqs";
 
+import { dataTableSearchParamsParsers } from "@/components/data-table";
 import { CreateMilestoneForm } from "@/components/linear/create-milestone-form";
+import { cn } from "@/lib/utils";
 import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
@@ -31,8 +34,35 @@ export function ProjectOverviewMilestones({
   project: { id: string; name: string };
   milestones: MilestoneRow[];
 }) {
+  const [params, setParams] = useQueryStates(dataTableSearchParamsParsers, {
+    history: "push",
+    shallow: false,
+  });
+
   const [createOpen, setCreateOpen] = useState(false);
   const [editMilestone, setEditMilestone] = useState<MilestoneRow | null>(null);
+
+  const selectedMilestoneIds = params.filters?.milestoneId ?? [];
+
+  function handleMilestoneRowActivate(itemId: string) {
+    const isOnlySelected =
+      selectedMilestoneIds.length === 1 && selectedMilestoneIds[0] === itemId;
+
+    if (isOnlySelected) {
+      const nextFilters = { ...params.filters };
+      delete nextFilters.milestoneId;
+      void setParams({ page: 1, filters: nextFilters });
+      return;
+    }
+
+    void setParams({
+      page: 1,
+      filters: {
+        ...params.filters,
+        milestoneId: [itemId],
+      },
+    });
+  }
 
   return (
     <div className="rounded-lg border">
@@ -53,22 +83,48 @@ export function ProjectOverviewMilestones({
           </tr>
         </thead>
         <tbody>
-          {milestones.map((item) => (
-            <tr key={item.id} className="border-t">
-              <td className="p-3">
-                <p className="font-medium">{item.name}</p>
-                <p className="text-xs text-muted-foreground">{item.description ?? "-"}</p>
-              </td>
-              <td className="p-3 capitalize">{item.status.replace("_", " ")}</td>
-              <td className="p-3">{item.targetDate ?? "-"}</td>
-              <td className="p-3">
-                <Button variant="ghost" size="sm" onClick={() => setEditMilestone(item)}>
-                  <PencilIcon className="mr-2 size-4" />
-                  Edit
-                </Button>
-              </td>
-            </tr>
-          ))}
+          {milestones.map((item) => {
+            const isSelected = selectedMilestoneIds.includes(item.id);
+
+            return (
+              <tr
+                key={item.id}
+                role="button"
+                tabIndex={0}
+                className={cn(
+                  "border-t cursor-pointer transition-colors hover:bg-muted/40",
+                  isSelected && "bg-muted/50",
+                )}
+                onClick={() => handleMilestoneRowActivate(item.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    handleMilestoneRowActivate(item.id);
+                  }
+                }}
+              >
+                <td className="p-3">
+                  <p className="font-medium">{item.name}</p>
+                  <p className="text-xs text-muted-foreground">{item.description ?? "-"}</p>
+                </td>
+                <td className="p-3 capitalize">{item.status.replace("_", " ")}</td>
+                <td className="p-3">{item.targetDate ?? "-"}</td>
+                <td className="p-3">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setEditMilestone(item);
+                    }}
+                  >
+                    <PencilIcon className="mr-2 size-4" />
+                    Edit
+                  </Button>
+                </td>
+              </tr>
+            );
+          })}
           {!milestones.length ? (
             <tr>
               <td className="p-3 text-muted-foreground" colSpan={4}>
