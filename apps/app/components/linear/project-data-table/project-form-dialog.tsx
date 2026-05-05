@@ -32,13 +32,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@workspace/ui/components/select";
-import { Textarea } from "@workspace/ui/components/textarea";
+import { ProjectMarkdownDescriptionField } from "@/components/linear/markdown-description/project-markdown-description-field";
+import { DESCRIPTION_MARKDOWN_MAX } from "@/lib/constants/description-markdown";
+
 import { type ProjectTableRow } from "./types";
 
 const formSchema = z.object({
   name: z.string().min(2).max(80),
   key: z.string().min(2).max(8).regex(/^[A-Z0-9]+$/, "Use uppercase letters/numbers"),
-  description: z.string().max(2000).optional(),
+  description: z.string().max(DESCRIPTION_MARKDOWN_MAX).optional(),
   teamId: z.string().nullable(),
   targetDate: z.string().nullable(),
   status: z.enum(["planned", "active", "completed", "archived"]),
@@ -65,7 +67,15 @@ export function ProjectFormDialog({
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [editorMountKey, setEditorMountKey] = useState(0);
   const isUpdate = mode === "update" && !!project;
+
+  function handleDialogOpenChange(next: boolean) {
+    if (next) {
+      setEditorMountKey((key) => key + 1);
+    }
+    onOpenChange(next);
+  }
 
   const defaultValues = useMemo<FormValues>(
     () => ({
@@ -133,7 +143,7 @@ export function ProjectFormDialog({
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle>{isUpdate ? "Edit project" : "Create project"}</DialogTitle>
@@ -258,9 +268,13 @@ export function ProjectFormDialog({
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Description (Markdown)</FormLabel>
+                  <FormLabel>Description</FormLabel>
                   <FormControl>
-                    <Textarea rows={4} placeholder="Project context..." {...field} />
+                    <ProjectMarkdownDescriptionField
+                      value={field.value ?? ""}
+                      onChange={field.onChange}
+                      editorKey={`${editorMountKey}-${mode}-${project?.id ?? "new"}`}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

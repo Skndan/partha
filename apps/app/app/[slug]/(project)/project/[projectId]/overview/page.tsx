@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { loadDataTableSearchParams, normalizeDataTableSearchParams } from "@/components/data-table";
 import { IssuePageContent } from "@/components/linear/issue-data-table/issue-page-content";
+import { MarkdownDescriptionPreview } from "@/components/linear/markdown-description/markdown-description-preview";
 import { ProjectOverviewMilestones } from "@/components/linear/project-overview-milestones";
 import { db } from "@/lib/db/db";
 import { milestone, project, team } from "@/lib/db/schema";
@@ -105,9 +106,7 @@ export default async function ProjectOverviewPage({
 
       <div className="rounded-lg border p-4">
         <h2 className="text-sm font-medium">Description</h2>
-        <p className="mt-2 whitespace-pre-wrap text-sm text-muted-foreground">
-          {projectRow.description || "No description provided."}
-        </p>
+        <MarkdownDescriptionPreview markdown={projectRow.description} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:items-start">

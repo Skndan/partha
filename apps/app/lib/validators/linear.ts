@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { DESCRIPTION_MARKDOWN_MAX } from "@/lib/constants/description-markdown";
+
 const keyRegex = /^[A-Z0-9]+$/;
 const acceptanceCriteriaItemSchema = z.object({
   id: z.string().min(1).max(64),
@@ -16,7 +18,7 @@ export const CreateTeamSchema = z.object({
 export const CreateProjectSchema = z.object({
   name: z.string().min(2).max(80),
   key: z.string().min(2).max(8).regex(keyRegex, "Use uppercase letters/numbers"),
-  description: z.string().max(2000).optional(),
+  description: z.string().max(DESCRIPTION_MARKDOWN_MAX).optional(),
   teamId: z.string().optional().nullable(),
   targetDate: z.string().optional().nullable(),
   status: z.enum(["planned", "active", "completed", "archived"]),
@@ -24,7 +26,7 @@ export const CreateProjectSchema = z.object({
 
 export const UpdateProjectSchema = z.object({
   name: z.string().min(2).max(80),
-  description: z.string().max(2000).optional(),
+  description: z.string().max(DESCRIPTION_MARKDOWN_MAX).optional(),
   teamId: z.string().optional().nullable(),
   targetDate: z.string().optional().nullable(),
   status: z.enum(["planned", "active", "completed", "archived"]),
@@ -47,7 +49,7 @@ export const CreateIssueLabelSchema = z.object({
 
 export const CreateIssueSchema = z.object({
   title: z.string().min(2).max(200),
-  description: z.string().max(20000),
+  description: z.string().max(DESCRIPTION_MARKDOWN_MAX),
   acceptanceCriteria: z.array(acceptanceCriteriaItemSchema).max(100).optional(),
   statusId: z.string().min(1),
   priority: z.enum(["none", "low", "medium", "high", "urgent"]),
