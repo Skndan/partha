@@ -1,9 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { CircleDotDashedIcon, PlusIcon } from "lucide-react";
 
 import { Button } from "@workspace/ui/components/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty";
 import { Heading } from "@workspace/ui/components/heading";
 import { IssueFormDialog } from "./issue-form-dialog";
 import { IssueTable } from "./issue-table";
@@ -68,15 +76,33 @@ export function IssuePageContent({
         }
       />
 
-      <IssueTable
-        slug={slug}
-        issues={issues}
-        totalCount={totalCount}
-        statusFilterOptions={statusFilterOptions}
-        projectFilterOptions={projects.map((project) => ({ label: project.name, value: project.id }))}
-        milestoneFilterOptions={milestones.map((milestone) => ({ label: milestone.name, value: milestone.id }))}
-        onEdit={(issue) => setDialogState({ open: true, mode: "update", issue })}
-      />
+      {issues.length > 0 ? (
+        <IssueTable
+          slug={slug}
+          issues={issues}
+          totalCount={totalCount}
+          statusFilterOptions={statusFilterOptions}
+          projectFilterOptions={projects.map((project) => ({ label: project.name, value: project.id }))}
+          milestoneFilterOptions={milestones.map((milestone) => ({ label: milestone.name, value: milestone.id }))}
+          onEdit={(issue) => setDialogState({ open: true, mode: "update", issue })}
+        />
+      ) : (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <CircleDotDashedIcon />
+            </EmptyMedia>
+            <EmptyTitle>No issues yet</EmptyTitle>
+            <EmptyDescription>Create your first issue to start tracking work.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button onClick={() => setDialogState({ open: true, mode: "create" })}>
+              <PlusIcon className="mr-2 size-4" />
+              Add issue
+            </Button>
+          </EmptyContent>
+        </Empty>
+      )}
 
       <IssueFormDialog
         slug={slug}

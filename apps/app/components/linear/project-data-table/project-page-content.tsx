@@ -1,10 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { PlusIcon } from "lucide-react";
+import { FolderKanbanIcon, PlusIcon } from "lucide-react";
 
 import { Heading } from "@workspace/ui/components/heading";
 import { Button } from "@workspace/ui/components/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty";
 import { ProjectFormDialog } from "./project-form-dialog";
 import { ProjectTable } from "./project-table";
 import { type ProjectTableRow } from "./types";
@@ -55,13 +63,31 @@ export function ProjectPageContent({
         }
       />
 
-      <ProjectTable
-        slug={slug}
-        projects={projects}
-        totalCount={totalCount}
-        teamFilterOptions={teamFilterOptions}
-        onEdit={(project) => setDialogState({ open: true, mode: "update", project })}
-      />
+      {projects.length > 0 ? (
+        <ProjectTable
+          slug={slug}
+          projects={projects}
+          totalCount={totalCount}
+          teamFilterOptions={teamFilterOptions}
+          onEdit={(project) => setDialogState({ open: true, mode: "update", project })}
+        />
+      ) : (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <FolderKanbanIcon />
+            </EmptyMedia>
+            <EmptyTitle>No projects yet</EmptyTitle>
+            <EmptyDescription>Create your first project to start organizing delivery work.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button onClick={() => setDialogState({ open: true, mode: "create" })}>
+              <PlusIcon className="mr-2 size-4" />
+              {addLabel}
+            </Button>
+          </EmptyContent>
+        </Empty>
+      )}
 
       <ProjectFormDialog
         slug={slug}
