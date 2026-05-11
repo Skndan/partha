@@ -12,7 +12,7 @@ export function MarketingHeader({ className }: { className?: string }) {
   return (
     <header
       className={cn(
-        "bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-0 z-50 border-b border-border backdrop-blur",
+        "bg-background/95 supports-backdrop-filter:bg-background/80 sticky top-0 z-50 border-b border-border backdrop-blur",
         className,
       )}
     >

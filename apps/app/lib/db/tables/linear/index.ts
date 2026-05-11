@@ -109,33 +109,6 @@ export const workspaceMember = pgTable(
   }),
 );
 
-export const workspaceInvite = pgTable(
-  "workspace_invite",
-  {
-    id: text("id").primaryKey(),
-    workspaceId: text("workspace_id")
-      .notNull()
-      .references(() => workspace.id, { onDelete: "cascade" }),
-    email: text("email").notNull(),
-    role: workspaceRoleEnum("role").notNull().default("member"),
-    token: text("token").notNull(),
-    invitedBy: text("invited_by")
-      .notNull()
-      .references(() => user.id, { onDelete: "restrict" }),
-    acceptedAt: timestamp("accepted_at"),
-    expiresAt: timestamp("expires_at").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-  },
-  (table) => ({
-    tokenUnique: uniqueIndex("workspace_invite_token_unique").on(table.token),
-    workspaceEmailIndex: index("workspace_invite_workspace_email_idx").on(
-      table.workspaceId,
-      table.email,
-    ),
-    expiresAtIndex: index("workspace_invite_expires_at_idx").on(table.expiresAt),
-  }),
-);
-
 export const team = pgTable(
   "team",
   {
@@ -184,6 +157,35 @@ export const teamMember = pgTable(
       table.userId,
     ),
     userIndex: index("team_member_user_idx").on(table.userId),
+  }),
+);
+
+export const workspaceInvite = pgTable(
+  "workspace_invite",
+  {
+    id: text("id").primaryKey(),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspace.id, { onDelete: "cascade" }),
+    email: text("email").notNull(),
+    role: workspaceRoleEnum("role").notNull().default("member"),
+    token: text("token").notNull(),
+    invitedBy: text("invited_by")
+      .notNull()
+      .references(() => user.id, { onDelete: "restrict" }),
+    teamId: text("team_id").references(() => team.id, { onDelete: "set null" }),
+    acceptedAt: timestamp("accepted_at"),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    tokenUnique: uniqueIndex("workspace_invite_token_unique").on(table.token),
+    workspaceEmailIndex: index("workspace_invite_workspace_email_idx").on(
+      table.workspaceId,
+      table.email,
+    ),
+    expiresAtIndex: index("workspace_invite_expires_at_idx").on(table.expiresAt),
+    teamIdIndex: index("workspace_invite_team_id_idx").on(table.teamId),
   }),
 );
 

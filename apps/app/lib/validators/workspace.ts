@@ -23,6 +23,13 @@ export type CreateWorkspaceInput = z.infer<typeof CreateWorkspaceSchema>;
 export const CreateWorkspaceInviteSchema = z.object({
   email: z.string().email("Enter a valid email"),
   role: z.enum(["admin", "member"]),
+  teamId: z
+    .string()
+    .optional()
+    .transform((value) => {
+      if (!value?.trim() || value === "none") return undefined;
+      return value;
+    }),
 });
 
 export type CreateWorkspaceInviteInput = z.infer<typeof CreateWorkspaceInviteSchema>;

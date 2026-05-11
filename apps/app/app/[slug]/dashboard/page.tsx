@@ -62,13 +62,13 @@ export default async function OrgDashboardPage({
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">Dashboard</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
+          {/* <p className="mt-2 text-sm text-muted-foreground">
             Workspace:{" "}
             <span className="font-medium text-foreground">{memberWorkspace.workspaceName}</span>
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
             Role: <span className="capitalize">{memberWorkspace.role}</span>
-          </p>
+          </p> */}
         </div>
       </div>
 

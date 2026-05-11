@@ -140,11 +140,11 @@ function WorkspaceSidebarContent({
   const selectedTeamKey = teamFromPath ?? teams[0]?.key ?? ''
 
   const quickItems = [
-    {
-      title: 'Dashboard',
-      href: `/${activeSlug}/dashboard`,
-      icon: LayoutDashboard,
-    },
+    // {
+    //   title: 'Dashboard',
+    //   href: `/${activeSlug}/dashboard`,
+    //   icon: LayoutDashboard,
+    // },
     // {
     //   title: 'My issues',
     //   href: selectedTeamKey
@@ -174,7 +174,7 @@ function WorkspaceSidebarContent({
 
   return (
     <>
-      <SidebarGroup>
+      {/* <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
             {quickItems.map((item) => {
@@ -193,7 +193,7 @@ function WorkspaceSidebarContent({
             })}
           </SidebarMenu>
         </SidebarGroupContent>
-      </SidebarGroup>
+      </SidebarGroup> */}
 
       <SidebarGroup>
         <SidebarGroupLabel>Workspace</SidebarGroupLabel>

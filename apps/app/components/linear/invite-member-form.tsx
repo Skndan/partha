@@ -28,13 +28,18 @@ import {
 import { CreateWorkspaceInviteSchema } from "@/lib/validators/workspace";
 import { cn } from "@/lib/utils";
 
-type FormValues = z.infer<typeof CreateWorkspaceInviteSchema>;
+import type { InviteMemberTeamOption } from "@/components/linear/invite-member-dialog";
+
+type FormValues = z.input<typeof CreateWorkspaceInviteSchema>;
+type InviteFormOutput = z.output<typeof CreateWorkspaceInviteSchema>;
 
 export function InviteMemberForm({
   slug,
+  teams,
   className,
 }: {
   slug: string;
+  teams: InviteMemberTeamOption[];
   className?: string;
 }) {
   const router = useRouter();
@@ -45,10 +50,11 @@ export function InviteMemberForm({
     defaultValues: {
       email: "",
       role: "member",
+      teamId: "none",
     },
   });
 
-  async function onSubmit(values: FormValues) {
+  async function onSubmit(values: InviteFormOutput) {
     setLoading(true);
     const res = await fetch(`/api/workspaces/${slug}/invites`, {
       method: "POST",
@@ -56,14 +62,27 @@ export function InviteMemberForm({
       body: JSON.stringify(values),
     });
 
+    const data = (await res.json().catch(() => null)) as {
+      error?: unknown;
+      warning?: string;
+    } | null;
+
     if (!res.ok) {
-      toast.error("Unable to send invite");
+      const message =
+        typeof data?.error === "string"
+          ? data.error
+          : "Unable to send invite";
+      toast.error(message);
       setLoading(false);
       return;
     }
 
-    toast.success("Invite created");
-    form.reset({ email: "", role: "member" });
+    if (data?.warning) {
+      toast.warning(data.warning);
+    } else {
+      toast.success("Invite sent");
+    }
+    form.reset({ email: "", role: "member", teamId: "none" });
     router.refresh();
     setLoading(false);
   }
@@ -93,7 +112,7 @@ export function InviteMemberForm({
             name="role"
             render={({ field }) => (
               <FormItem className="sm:col-span-1">
-                <FormLabel>Role</FormLabel>
+                <FormLabel>Workspace role</FormLabel>
                 <Select value={field.value} onValueChange={field.onChange}>
                   <FormControl className="w-full">
                     <SelectTrigger>
@@ -110,9 +129,35 @@ export function InviteMemberForm({
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="teamId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Default team (optional)</FormLabel>
+              <Select value={field.value ?? "none"} onValueChange={field.onChange}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="No default team" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="none">No default team</SelectItem>
+                  {teams.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>
+                      {t.name}{" "}
+                      <span className="text-muted-foreground">({t.key})</span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         <div className="flex justify-end">
           <Button type="submit" disabled={loading}>
-            {loading ? <Loader2 className="size-4 animate-spin" /> : "Send Invite"}
+            {loading ? <Loader2 className="size-4 animate-spin" /> : "Send invite"}
           </Button>
         </div>
       </form>

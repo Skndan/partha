@@ -5,7 +5,12 @@ import { and, eq, isNull } from "drizzle-orm";
 
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db/db";
-import { workspace, workspaceInvite, workspaceMember } from "@/lib/db/schema";
+import {
+  teamMember,
+  workspace,
+  workspaceInvite,
+  workspaceMember,
+} from "@/lib/db/schema";
 import { publishWorkspaceEvent } from "@/lib/workspaces/realtime";
 
 export async function POST(
@@ -61,6 +66,26 @@ export async function POST(
       role: invite.role,
       joinedAt: new Date(),
     });
+  }
+
+  if (invite.teamId) {
+    const [existingTeamMember] = await db
+      .select({ id: teamMember.id })
+      .from(teamMember)
+      .where(
+        and(eq(teamMember.teamId, invite.teamId), eq(teamMember.userId, session.user.id)),
+      )
+      .limit(1);
+
+    if (!existingTeamMember) {
+      await db.insert(teamMember).values({
+        id: randomUUID(),
+        teamId: invite.teamId,
+        userId: session.user.id,
+        role: "member",
+        createdAt: new Date(),
+      });
+    }
   }
 
   await db
