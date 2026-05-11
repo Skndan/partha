@@ -6,6 +6,7 @@ import { MarketingMobileNav } from "@/components/marketing/marketing-mobile-nav"
 import { MarketingNavLinksDesktop } from "@/components/marketing/marketing-nav-links";
 import { cn } from "@/lib/utils";
 import { coreAppUrl } from "@/lib/core-app-url";
+import { AuthBrandLogo } from "../auth-brand-logo";
 
 export function MarketingHeader({ className }: { className?: string }) {
   return (
@@ -16,13 +17,13 @@ export function MarketingHeader({ className }: { className?: string }) {
       )}
     >
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:gap-4 sm:px-6">
-        <Link
+        {/* <Link
           href="/"
           className="text-foreground shrink-0 text-xl font-semibold tracking-tight sm:text-[1.35rem]"
         >
           Partha
-        </Link>
-
+        </Link> */}
+        <AuthBrandLogo />
         <MarketingNavLinksDesktop className="hidden items-center gap-6 md:flex" />
 
         <div className="flex items-center gap-2">
