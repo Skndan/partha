@@ -6,6 +6,7 @@ import { loadDataTableSearchParams, normalizeDataTableSearchParams } from "@/com
 import { IssuePageContent } from "@/components/linear/issue-data-table/issue-page-content";
 import { MarkdownDescriptionPreview } from "@/components/linear/markdown-description/markdown-description-preview";
 import { ProjectOverviewMilestones } from "@/components/linear/project-overview-milestones";
+import { ProjectPlanningLinks } from "@/components/linear/sprints/project-planning-links";
 import { db } from "@/lib/db/db";
 import { milestone, project, team } from "@/lib/db/schema";
 import { requireWorkspaceContext } from "@/lib/workspaces/access";
@@ -95,6 +96,9 @@ export default async function ProjectOverviewPage({
               </Link>
             </p>
           ) : null}
+          <div className="mt-3">
+            <ProjectPlanningLinks current="overview" projectId={projectRow.id} slug={slug} />
+          </div>
         </div>
         <Link
           className="text-sm text-muted-foreground underline-offset-4 hover:underline"

@@ -4,7 +4,7 @@ In Partha, **issues** are the atomic delivery unit: titles, rich descriptions, s
 
 ## Data model (selected)
 
-- `issue` — workspace + optional team/project/milestone/parent issue; `identifier` (human-readable key); `issue_priority_enum`; timestamps for due/completed work.
+- `issue` — workspace + optional team/project/milestone/parent issue; `identifier` (human-readable key); `issue_priority_enum`; optional `start_date` and `due_date` (e.g. sprint Gantt); timestamps for completed work.
 - `issue_status` — workspace-local columns with `issue_status_type_enum` (`backlog`, `unstarted`, `started`, `completed`, `canceled`).
 - `issue_label`, `issue_label_link`
 - `issue_assignee` — supplemental assignees vs primary `assigneeId`

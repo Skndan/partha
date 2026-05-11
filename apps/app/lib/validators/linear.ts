@@ -47,6 +47,39 @@ export const CreateIssueLabelSchema = z.object({
   color: z.string().min(1).max(40),
 });
 
+const isoDateString = z
+  .string()
+  .regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD");
+
+export const CreateSprintSchema = z
+  .object({
+    name: z.string().min(2).max(120),
+    goal: z.string().max(2000).optional().nullable(),
+    startDate: isoDateString,
+    endDate: isoDateString,
+    status: z.enum(["planned", "active", "completed"]).optional(),
+  })
+  .refine((data) => data.endDate >= data.startDate, {
+    message: "End date must be on or after start date",
+    path: ["endDate"],
+  });
+
+export const UpdateSprintSchema = z.object({
+  name: z.string().min(2).max(120).optional(),
+  goal: z.string().max(2000).optional().nullable(),
+  startDate: isoDateString.optional(),
+  endDate: isoDateString.optional(),
+  status: z.enum(["planned", "active", "completed"]).optional(),
+});
+
+export const AddSprintIssuesSchema = z.object({
+  issueIds: z.array(z.string().min(1)).min(1).max(200),
+});
+
+export const ReorderSprintIssuesSchema = z.object({
+  orderedIssueIds: z.array(z.string().min(1)).min(1),
+});
+
 export const CreateIssueSchema = z.object({
   title: z.string().min(2).max(200),
   description: z.string().max(DESCRIPTION_MARKDOWN_MAX),
@@ -57,6 +90,7 @@ export const CreateIssueSchema = z.object({
   projectId: z.string().optional().nullable(),
   milestoneId: z.string().optional().nullable(),
   assigneeId: z.string().optional().nullable(),
+  startDate: z.string().optional().nullable(),
   dueDate: z.string().optional().nullable(),
   estimate: z.number().int().nonnegative().optional().nullable(),
   labelIds: z.array(z.string()),

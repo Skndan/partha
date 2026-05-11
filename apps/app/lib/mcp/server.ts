@@ -245,6 +245,7 @@ const CreateIssueToolInputSchema = z
     projectId: CreateIssueSchema.shape.projectId,
     milestoneId: CreateIssueSchema.shape.milestoneId,
     assigneeId: CreateIssueSchema.shape.assigneeId,
+    startDate: CreateIssueSchema.shape.startDate,
     dueDate: CreateIssueSchema.shape.dueDate,
     estimate: CreateIssueSchema.shape.estimate,
     parentIssueId: CreateIssueSchema.shape.parentIssueId,
@@ -269,6 +270,7 @@ const UpdateIssueToolInputSchema = z
     projectId: UpdateIssueSchema.shape.projectId,
     milestoneId: UpdateIssueSchema.shape.milestoneId,
     assigneeId: UpdateIssueSchema.shape.assigneeId,
+    startDate: UpdateIssueSchema.shape.startDate,
     dueDate: UpdateIssueSchema.shape.dueDate,
     estimate: UpdateIssueSchema.shape.estimate,
     parentIssueId: UpdateIssueSchema.shape.parentIssueId,
@@ -291,6 +293,7 @@ const UpdateIssueToolInputSchema = z
       value.projectId !== undefined ||
       value.milestoneId !== undefined ||
       value.assigneeId !== undefined ||
+      value.startDate !== undefined ||
       value.dueDate !== undefined ||
       value.estimate !== undefined ||
       value.labels !== undefined ||
@@ -1741,6 +1744,7 @@ export function createMcpServer() {
           projectId: issue.projectId,
           milestoneId: issue.milestoneId,
           assigneeId: issue.assigneeId,
+          startDate: issue.startDate,
           dueDate: issue.dueDate,
           estimate: issue.estimate,
           completedAt: issue.completedAt,
@@ -1804,6 +1808,7 @@ export function createMcpServer() {
           parentIssueId: issue.parentIssueId,
           assigneeId: issue.assigneeId,
           creatorId: issue.creatorId,
+          startDate: issue.startDate,
           dueDate: issue.dueDate,
           estimate: issue.estimate,
           completedAt: issue.completedAt,
@@ -1968,6 +1973,7 @@ export function createMcpServer() {
           priority: parsed.priority,
           assigneeId: parsed.assigneeId || null,
           creatorId: auth.userId,
+          startDate: parsed.startDate || null,
           dueDate: parsed.dueDate || null,
           estimate: parsed.estimate ?? null,
           completedAt: null,
@@ -2142,6 +2148,7 @@ export function createMcpServer() {
       if (parsed.projectId !== undefined) updateInput.projectId = parsed.projectId || null;
       if (parsed.milestoneId !== undefined) updateInput.milestoneId = parsed.milestoneId || null;
       if (parsed.assigneeId !== undefined) updateInput.assigneeId = parsed.assigneeId || null;
+      if (parsed.startDate !== undefined) updateInput.startDate = parsed.startDate || null;
       if (parsed.dueDate !== undefined) updateInput.dueDate = parsed.dueDate || null;
       if (parsed.parentIssueId !== undefined) updateInput.parentIssueId = parsed.parentIssueId || null;
       if (parsed.estimate !== undefined) updateInput.estimate = parsed.estimate ?? null;

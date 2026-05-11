@@ -8,7 +8,8 @@ Workspace
 ├── Teams
 │   └── Team members
 ├── Projects (optional team)
-│   └── Milestones (optional project)
+│   ├── Milestones (optional project)
+│   └── Sprints (timeboxed planning; issues linked via sprint_issue)
 └── Issues (may reference team, project, milestone)
 ```
 
@@ -20,9 +21,9 @@ Table definitions are composed under `lib/db/tables/` and re-exported from `lib/
 
 - Workspace shell: `app/[slug]/layout.tsx`, dashboard `app/[slug]/dashboard/page.tsx`
 - Teams: `app/[slug]/(team)/teams/page.tsx`, team hub `app/[slug]/(team)/team/[teamKey]/...`
-- Projects: `app/[slug]/(project)/projects/all/page.tsx`, `app/[slug]/(project)/project/[projectId]/...`
+- Projects: `app/[slug]/(project)/projects/all/page.tsx`, `app/[slug]/(project)/project/[projectId]/...` (includes **Sprints** under `project/[projectId]/sprints`)
 - Issue detail: `app/[slug]/issues/[issueId]/page.tsx`
 
 ## Related docs
 
-- [Workspaces](./workspaces.md) · [Teams](./teams.md) · [Projects](./projects.md) · [Milestones](./milestones.md) · [Issues](./issues.md)
+- [Workspaces](./workspaces.md) · [Teams](./teams.md) · [Projects](./projects.md) · [Milestones](./milestones.md) · [Sprints](./sprints.md) · [Issues](./issues.md)

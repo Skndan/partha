@@ -64,6 +64,7 @@ export async function PATCH(
       projectId: issue.projectId,
       milestoneId: issue.milestoneId,
       assigneeId: issue.assigneeId,
+      startDate: issue.startDate,
       dueDate: issue.dueDate,
       estimate: issue.estimate,
       parentIssueId: issue.parentIssueId,
@@ -175,6 +176,7 @@ export async function PATCH(
   if (data.projectId !== undefined) updateInput.projectId = data.projectId || null;
   if (data.milestoneId !== undefined) updateInput.milestoneId = data.milestoneId || null;
   if (data.assigneeId !== undefined) updateInput.assigneeId = data.assigneeId || null;
+  if (data.startDate !== undefined) updateInput.startDate = data.startDate || null;
   if (data.dueDate !== undefined) updateInput.dueDate = data.dueDate || null;
   if (data.parentIssueId !== undefined) updateInput.parentIssueId = data.parentIssueId || null;
   if (data.estimate !== undefined) updateInput.estimate = data.estimate ?? null;
@@ -203,6 +205,11 @@ export async function PATCH(
   addChange("Priority", existingIssueDetails.priority, data.priority ?? existingIssueDetails.priority);
   addChange("Assignee", existingIssueDetails.assigneeId, data.assigneeId ?? existingIssueDetails.assigneeId);
   addChange("Estimate", existingIssueDetails.estimate, data.estimate ?? existingIssueDetails.estimate);
+  addChange(
+    "Start date",
+    existingIssueDetails.startDate,
+    data.startDate ?? existingIssueDetails.startDate,
+  );
   addChange("Due date", existingIssueDetails.dueDate, data.dueDate ?? existingIssueDetails.dueDate);
 
   await db.transaction(async (tx) => {

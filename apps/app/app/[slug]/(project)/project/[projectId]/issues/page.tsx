@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 
 import { loadDataTableSearchParams, normalizeDataTableSearchParams } from "@/components/data-table";
 import { IssuePageContent } from "@/components/linear/issue-data-table/issue-page-content";
+import { ProjectPlanningLinks } from "@/components/linear/sprints/project-planning-links";
 import { db } from "@/lib/db/db";
 import { milestone, project } from "@/lib/db/schema";
 import { requireWorkspaceContext } from "@/lib/workspaces/access";
@@ -67,6 +68,9 @@ export default async function ProjectIssuesPage({
           {projectTeam ? (
             <p className="text-sm text-muted-foreground">Team: {projectTeam.name}</p>
           ) : null}
+          <div className="mt-3">
+            <ProjectPlanningLinks current="issues" projectId={projectRow.id} slug={slug} />
+          </div>
         </div>
         <Link
           className="text-sm text-muted-foreground underline-offset-4 hover:underline"
