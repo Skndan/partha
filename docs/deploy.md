@@ -1,6 +1,6 @@
 # Deploy Partha (Docker)
 
-This guide covers production-style deployment of the Partha web app with Docker, Postgres, Nginx, and TLS. For local development, see [getting-started.md](./getting-started.md).
+This guide covers production-style deployment of the Partha web app with Docker, Postgres, Nginx, and TLS. For local development, see [getting started](http://localhost:4002/docs/getting-started) in the hosted docs.
 
 ## Prerequisites
 
@@ -62,4 +62,4 @@ docker compose logs -f
 
 The deployment script may sync `.env` from `.env.local` for Docker. Keep production secrets out of git.
 
-For Partha-specific runtime variables, see `docs/getting-started.md` and `.env.example`.
+For Partha-specific runtime variables, see [getting started](http://localhost:4002/docs/getting-started) and `.env.example`.

@@ -1,0 +1,35 @@
+---
+title: "MCP tools reference"
+description: "Reference for tools exposed by Partha’s MCP server. Authoritative definitions live in lib/mcp/server.ts. Update this tab"
+---
+
+Reference for tools exposed by Partha’s MCP server. Authoritative definitions live in `lib/mcp/server.ts`. Update this table when tools change.
+
+| Tool | Description | Scopes / notes |
+|------|-------------|----------------|
+| `ping` | Connectivity probe | none |
+| `whoami` | Returns principal context | authenticated |
+| `list_workspaces` | Lists accessible workspaces | authenticated |
+| `get_workspace` | Fetch workspace + role | `workspace:read` |
+| `create_workspace` | Creates workspace + default statuses | `workspace:write` |
+| `update_workspace` | Updates workspace metadata | `workspace:write` |
+| `list_teams` | Paginated team list | `workspace:read` |
+| `get_team` | Fetch team by ID | `workspace:read` |
+| `create_team` | Create team | `workspace:write` |
+| `update_team` | Update team | `workspace:write` |
+| `list_projects` | Paginated projects | `workspace:read` |
+| `get_project` | Fetch project | `workspace:read` |
+| `create_project` | Create project | `workspace:write` |
+| `update_project` | Update project | `workspace:write` |
+| `list_milestones` | Paginated milestones | `workspace:read` |
+| `get_milestone` | Fetch milestone | `workspace:read` |
+| `create_milestone` | Create milestone | `workspace:write` |
+| `update_milestone` | Update milestone | `workspace:write` |
+| `list_issue_statuses` | Lists statuses for workspace | `mcp:read` |
+| `list_issues` | Paginated issue list | `mcp:read` |
+| `get_issue` | Issue + labels + relations | `mcp:read` |
+| `create_issue` | Create issue (prefers names for status/labels) | `mcp:write` |
+| `update_issue` | Patch issue | `mcp:write` |
+
+Input schemas are defined via Zod shapes adjacent to each tool registration — inspect `lib/mcp/server.ts` for exact fields.
+

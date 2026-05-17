@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for improving Partha. Clone [Skndan/partha](https://github.com/Skndan/partha), follow **[getting-started](./getting-started.md)** (install and env), and use this page for day-to-day conventions. Broader orientation lives in the root **[README](../README.md)** and the **[documentation index](./README.md)**.
+Thanks for improving Partha. Clone [Skndan/partha](https://github.com/Skndan/partha), follow **[getting started](http://localhost:4002/docs/getting-started)** (install and env) in the hosted docs, and use this page for day-to-day conventions. Broader orientation lives in the root **[README](../README.md)**.
 
 ## Commits
 
@@ -33,10 +33,10 @@ bunx --bun shadcn@latest add <component>
 
 When adding or renaming MCP tools, update:
 
-- `lib/mcp/server.ts`
-- `docs/mcp/tools-reference.md`
-- `lib/marketing/mcp-tools.ts` (marketing `/mcp` table)
+- `apps/app/lib/mcp/server.ts`
+- `apps/docs/content/docs/mcp/tools-reference.mdx`
+- `apps/site/lib/marketing/mcp-tools.ts` (marketing `/mcp` table)
 
-## Docs
+## Product docs
 
-Keep docs ASCII-first Markdown; label **planned** work with the standard banner used in `docs/integrations/*.md`.
+Edit Fumadocs content under `apps/docs/content/docs/`. Run `bun run dev:docs` to preview. Label **planned** work with the standard banner used in integration pages.

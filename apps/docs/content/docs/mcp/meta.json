@@ -1,0 +1,13 @@
+{
+  "title": "MCP",
+  "pages": [
+    "index",
+    "oauth",
+    "scopes",
+    "tools-reference",
+    "pagination",
+    "dev-tokens",
+    "---Clients---",
+    "...clients"
+  ]
+}

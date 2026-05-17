@@ -27,7 +27,6 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_URL: z.string().url(),
     NEXT_PUBLIC_GITHUB_REPO_URL: z.string().url().optional(),
-    NEXT_PUBLIC_GITHUB_DOCS_BASE: z.string().url().optional(),
   },
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
@@ -36,7 +35,6 @@ export const env = createEnv({
     BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
     NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
     NEXT_PUBLIC_GITHUB_REPO_URL: process.env.NEXT_PUBLIC_GITHUB_REPO_URL || undefined,
-    NEXT_PUBLIC_GITHUB_DOCS_BASE: process.env.NEXT_PUBLIC_GITHUB_DOCS_BASE || undefined,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID ?? "",
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET ?? "",
 

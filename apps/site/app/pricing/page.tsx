@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 import { PricingTiers } from "@/components/marketing/pricing-tiers";
+import { docsHref } from "@/lib/marketing/docs-url";
 import {
   Accordion,
   AccordionContent,
@@ -17,7 +19,22 @@ export const metadata: Metadata = {
 const FAQ = [
   {
     q: "Is Partha self-hosted?",
-    a: "You can run it yourself today — see docs/getting-started.md and docs/deploy.md. Managed hosting details arrive with GA.",
+    a: (
+      <>
+        You can run it yourself today — see{" "}
+        <Link href={docsHref("getting-started")} className="text-primary font-medium hover:underline">
+          getting started
+        </Link>{" "}
+        and{" "}
+        <a
+          href="https://github.com/Skndan/partha/blob/main/docs/deploy.md"
+          className="text-primary font-medium hover:underline"
+        >
+          deploy
+        </a>
+        . Managed hosting details arrive with GA.
+      </>
+    ),
   },
   {
     q: "How does MCP billing work?",
@@ -25,7 +42,15 @@ const FAQ = [
   },
   {
     q: "Can we get enterprise SSO?",
-    a: "On the roadmap — tracked alongside governance requirements in docs/roadmap.md.",
+    a: (
+      <>
+        On the roadmap — tracked alongside governance requirements in the{" "}
+        <Link href={docsHref("roadmap")} className="text-primary font-medium hover:underline">
+          product roadmap
+        </Link>
+        .
+      </>
+    ),
   },
 ];
 

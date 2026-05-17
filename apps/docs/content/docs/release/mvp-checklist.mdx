@@ -1,0 +1,145 @@
+---
+title: "MVP release checklist"
+description: "Use this checklist before promoting Partha to production. Automated gates run in GitHub Actions (.github/workflows/ci.ym"
+---
+
+Use this checklist before promoting Partha to production. Automated gates run in GitHub Actions ([`.github/workflows/ci.yml`](../../.github/workflows/ci.yml)).
+
+## A. Preflight (automated)
+
+Run from the repository root:
+
+```bash
+bun install
+docker compose up postgres -d
+export DATABASE_URL=postgresql://postgres:postgres@localhost:5432/partha
+export BETTER_AUTH_SECRET=local-dev-secret-local-dev-secret-local-12
+export BETTER_AUTH_URL=http://localhost:4000
+export NEXT_PUBLIC_URL=http://localhost:4000
+export SKIP_ENV_VALIDATION=1
+export RUN_INTEGRATION_TESTS=1
+
+cd apps/app && bun run db:push && cd ../..
+bun run typecheck
+bun run lint
+cd apps/app && bun run test && bun run test:integration
+cd apps/app && bun run db:validate && bun run knip
+bun run build:app && bun run build:site
+```
+
+| Step | Command | Pass |
+|------|---------|------|
+| Typecheck | `bun run typecheck` | ☐ |
+| Lint | `bun run lint` | ☐ |
+| Unit tests | `cd apps/app && bun run test` | ☐ |
+| Integration tests | `cd apps/app && bun run test:integration` | ☐ |
+| DB validate | `cd apps/app && bun run db:validate` | ☐ |
+| Knip | `cd apps/app && bun run knip` | ☐ |
+| Build app + site | `bun run build:app && bun run build:site` | ☐ |
+
+## B. Product UI (manual)
+
+| # | Flow | Route | Pass |
+|---|------|-------|------|
+| 1 | Signup + email verification | `/signup` | ☐ |
+| 2 | Login + session persist | `/login` | ☐ |
+| 3 | Create workspace | `/onboarding` | ☐ |
+| 4 | Dashboard loads counts | `/{slug}/dashboard` | ☐ |
+| 5 | Create team, project, milestone | teams / projects UI | ☐ |
+| 6 | Issue detail (comment, relation, sub-issue) | `/{slug}/issues/[id]` | ☐ |
+| 7 | Member invite + accept | members + invite link | ☐ |
+| 8 | SSE live update (two tabs) | create issue in one tab | ☐ |
+| 9 | Google OAuth (if configured) | `/login` | ☐ |
+
+## C. MCP (all transports)
+
+### C1. Programmatic (CI parity)
+
+Integration suite: `cd apps/app && bun run test:integration`
+
+| Area | Pass |
+|------|------|
+| OAuth code exchange + revoke | ☐ |
+| 23-tool smoke | ☐ |
+| Scope denial | ☐ |
+| Workspace-bound token | ☐ |
+| HTTP initialize + discovery metadata | ☐ |
+| REST workspace/issue/invite smoke | ☐ |
+
+### C2. Stdio + dev token
+
+```bash
+bun run dev:app
+# In another terminal:
+cd apps/app && bun run mcp:token --email you@example.com
+export MCP_ACCESS_TOKEN=...
+bun run mcp:smoke
+```
+
+| Step | Pass |
+|------|------|
+| Dev token minted | ☐ |
+| `mcp:smoke` exits 0 | ☐ |
+| Manual: `create_issue` via stdio (optional) | ☐ |
+
+### C3. Cursor HTTP OAuth
+
+Config: [`/docs/mcp/clients/cursor`](/docs/mcp/clients/cursor)
+
+| Step | Pass |
+|------|------|
+| `~/.cursor/mcp.json` points to app `/api/mcp` | ☐ |
+| Authenticate flow completes | ☐ |
+| Tool list shows 23 tools | ☐ |
+| Spot-check read/write per entity family | ☐ |
+
+#### MCP tool matrix (spot-check)
+
+| Category | Read | Write | Pass |
+|----------|------|-------|------|
+| Diagnostics | `ping`, `whoami` | — | ☐ |
+| Workspace | `get_workspace` | `update_workspace` | ☐ |
+| Team | `get_team` | `create_team` | ☐ |
+| Project | `get_project` | `create_project` | ☐ |
+| Milestone | `get_milestone` | `create_milestone` | ☐ |
+| Issue | `list_issues`, `get_issue` | `create_issue`, `update_issue` | ☐ |
+
+### Cursor OAuth validation log
+
+Record results from the manual Cursor pass (date, environment, outcome). Automated tests cover HTTP initialize + OAuth metadata; full Cursor UX still requires a human pass before release.
+
+| Date | Environment | Result | Notes |
+|------|-------------|--------|-------|
+| 2026-05-17 | `localhost:4000` | Pending manual | Automated: `oauth-discovery.test.ts`, `http-transport` integration (CI with Postgres) |
+
+## D. Production hardening
+
+| Check | Expected | Pass |
+|-------|----------|------|
+| `NODE_ENV=production` | `/api/dev/mcp/token` disabled | ☐ |
+| Production build | `/dev/mcp-token` not usable | ☐ |
+| OAuth metadata | `/.well-known/*` on deploy origin (HTTPS) | ☐ |
+| Secrets | `BETTER_AUTH_SECRET`, `DATABASE_URL` set | ☐ |
+| Security review | [`docs/security.md`](https://github.com/Skndan/partha/blob/main/docs/security.md) | ☐ |
+
+## E. Deploy dry-run (staging)
+
+| Step | Pass |
+|------|------|
+| `./scripts/deploy-ssl-and-up.sh` on staging | ☐ |
+| Repeat MCP Cursor check against staging URL | ☐ |
+
+## Known MVP limitations (documented, not blockers)
+
+- No MCP **resources** registered (tools only).
+- API keys and session revocation APIs exist without settings UI.
+- Notifications API exists; dedicated notifications UI may be limited.
+- Platform admin / election master data routes are **not** part of this MVP.
+
+## Sign-off
+
+| Role | Name | Date |
+|------|------|------|
+| Engineering | | |
+| Product | | |
+

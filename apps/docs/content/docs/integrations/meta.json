@@ -1,0 +1,11 @@
+{
+  "title": "Integrations",
+  "pages": [
+    "github",
+    "payments",
+    "analytics",
+    "marketing",
+    "databases",
+    "deployments"
+  ]
+}

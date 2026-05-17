@@ -16,6 +16,11 @@ type McpHttpSession = {
 
 const sessions = new Map<string, McpHttpSession>();
 
+/** Clears in-memory MCP HTTP sessions (for tests only). */
+export function resetMcpHttpSessionsForTests() {
+  sessions.clear();
+}
+
 function samePrincipal(a: AuthInfo, b: AuthInfo) {
   return (
     a.clientId === b.clientId &&
