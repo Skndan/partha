@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { docsHref } from "@/lib/marketing/docs-url";
 import { Badge } from "@workspace/ui/components/badge";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
@@ -16,37 +17,37 @@ const ROWS = [
     name: "GitHub",
     body: "Create repos when projects spawn, mirror commits to issues, and draft change logs from merged history.",
     status: "Planned" as const,
-    doc: "docs/integrations/github.md",
+    docPath: "integrations/github",
   },
   {
     name: "Stripe & Razorpay",
     body: "Unified billing primitives with webhook ingestion mapped to workspace milestones.",
     status: "Planned" as const,
-    doc: "docs/integrations/payments.md",
+    docPath: "integrations/payments",
   },
   {
     name: "Analytics",
     body: "Activation and retention telemetry with guardrailed event taxonomy.",
     status: "Planned" as const,
-    doc: "docs/integrations/analytics.md",
+    docPath: "integrations/analytics",
   },
   {
     name: "Marketing & ESP",
     body: "Transactional + nurture journeys triggered by delivery milestones.",
     status: "Planned" as const,
-    doc: "docs/integrations/marketing.md",
+    docPath: "integrations/marketing",
   },
   {
     name: "Databases",
     body: "Spin Neon / Postgres instances when initiatives graduate phases.",
     status: "Planned" as const,
-    doc: "docs/integrations/databases.md",
+    docPath: "integrations/databases",
   },
   {
     name: "Deployments",
     body: "Vercel and cloud promotion hooks tied to Partha milestones.",
     status: "Planned" as const,
-    doc: "docs/integrations/deployments.md",
+    docPath: "integrations/deployments",
   },
 ];
 
@@ -77,7 +78,12 @@ export default function IntegrationsPage() {
                 <div className="space-y-2">
                   <CardTitle>{row.name}</CardTitle>
                   <CardDescription>{row.body}</CardDescription>
-                  <p className="text-muted-foreground font-mono text-xs">{row.doc}</p>
+                  <Link
+                    href={docsHref(row.docPath)}
+                    className="text-primary text-xs font-medium hover:underline"
+                  >
+                    Read spec
+                  </Link>
                 </div>
                 <Badge variant="secondary">{row.status}</Badge>
               </CardHeader>

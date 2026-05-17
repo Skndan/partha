@@ -1,0 +1,21 @@
+---
+title: "Projects"
+description: "In Partha, projects capture initiative-sized buckets of work. They may optionally belong to a team and carry a status al"
+---
+
+In Partha, **projects** capture initiative-sized buckets of work. They may optionally belong to a **team** and carry a **status** aligned with `project_status_enum` in Drizzle.
+
+## Data model
+
+- `project` — `workspaceId`, optional `teamId`, `name`, `key`, `description`, `status`, optional `targetDate`, audit fields.
+
+## UX
+
+- Workspace-wide list: `app/[slug]/(project)/projects/all/page.tsx`
+- Detail/overview: `app/[slug]/(project)/project/[projectId]/overview/page.tsx`
+- Issues tab: `.../issues/page.tsx`
+
+## MCP tools
+
+`list_projects`, `get_project`, `create_project`, `update_project`.
+

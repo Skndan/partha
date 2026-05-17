@@ -117,4 +117,60 @@ describe("mcp server tools", () => {
       ),
     ).rejects.not.toThrow("Unauthorized");
   });
+
+  test("ping works without auth", async () => {
+    const tools = getRegisteredTools();
+    const response = (await tools.ping!.handler({})) as {
+      content: Array<{ text: string }>;
+    };
+    expect(response.content[0]?.text).toBe("pong");
+  });
+});
+
+const toolScopeRequirements: Record<string, string | null> = {
+  ping: null,
+  whoami: null,
+  list_workspaces: null,
+  get_workspace: "workspace:read",
+  create_workspace: "workspace:write",
+  update_workspace: "workspace:write",
+  list_teams: "workspace:read",
+  get_team: "workspace:read",
+  create_team: "workspace:write",
+  update_team: "workspace:write",
+  list_projects: "workspace:read",
+  get_project: "workspace:read",
+  create_project: "workspace:write",
+  update_project: "workspace:write",
+  list_milestones: "workspace:read",
+  get_milestone: "workspace:read",
+  create_milestone: "workspace:write",
+  update_milestone: "workspace:write",
+  list_issue_statuses: "mcp:read",
+  list_issues: "mcp:read",
+  get_issue: "mcp:read",
+  create_issue: "mcp:write",
+  update_issue: "mcp:write",
+};
+
+describe("mcp server scope enforcement", () => {
+  test("scoped tools reject missing scopes with a clear error", async () => {
+    const tools = getRegisteredTools();
+
+    for (const [toolName, requiredScope] of Object.entries(toolScopeRequirements)) {
+      if (!requiredScope) {
+        continue;
+      }
+
+      await expect(
+        tools[toolName]!.handler({}, createAuthExtra({ scopes: [] })),
+      ).rejects.toThrow(`Missing required scope: ${requiredScope}`);
+    }
+  });
+
+  test("whoami succeeds with auth but without oauth scopes", async () => {
+    const tools = getRegisteredTools();
+    const response = await tools.whoami!.handler({}, createAuthExtra({ scopes: [] }));
+    expect(response).toBeDefined();
+  });
 });

@@ -166,6 +166,7 @@ export async function POST(
       priority: data.priority,
       assigneeId: data.assigneeId || null,
       creatorId: context.userId,
+      startDate: data.startDate || null,
       dueDate: data.dueDate || null,
       estimate: data.estimate ?? null,
       completedAt,

@@ -5,6 +5,7 @@ import { McpToolsTable } from "@/components/marketing/mcp-tools-table";
 import { Button } from "@workspace/ui/components/button";
 import { Card, CardContent } from "@workspace/ui/components/card";
 import { coreAppUrl } from "@/lib/core-app-url";
+import { docsHref } from "@/lib/marketing/docs-url";
 
 export const metadata: Metadata = {
   title: "MCP",
@@ -78,8 +79,15 @@ export default function McpMarketingPage() {
             </li>
           </ol>
           <p className="text-muted-foreground text-sm">
-            Deep dives: <code className="bg-muted rounded px-1">docs/mcp/oauth.md</code> and{" "}
-            <code className="bg-muted rounded px-1">docs/mcp/scopes.md</code>.
+            Deep dives:{" "}
+            <Link href={docsHref("mcp/oauth")} className="text-primary font-medium hover:underline">
+              OAuth
+            </Link>{" "}
+            and{" "}
+            <Link href={docsHref("mcp/scopes")} className="text-primary font-medium hover:underline">
+              scopes
+            </Link>
+            .
           </p>
         </section>
 
@@ -138,8 +146,14 @@ export default function McpMarketingPage() {
           <p className="text-muted-foreground text-sm">
             Local workflows can mint tokens via <code className="bg-muted rounded px-1">bun run mcp:token</code> or the{" "}
             <code className="bg-muted rounded px-1">/dev/mcp-token</code> UI (development only). See{" "}
-            <code className="bg-muted rounded px-1">docs/mcp/dev-tokens.md</code> and{" "}
-            <code className="bg-muted rounded px-1">docs/mcp/clients/stdio.md</code>.
+            <Link href={docsHref("mcp/dev-tokens")} className="text-primary font-medium hover:underline">
+              dev tokens
+            </Link>{" "}
+            and{" "}
+            <Link href={docsHref("mcp/clients/stdio")} className="text-primary font-medium hover:underline">
+              stdio client setup
+            </Link>
+            .
           </p>
         </section>
       </div>

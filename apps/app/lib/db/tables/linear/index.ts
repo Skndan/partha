@@ -52,6 +52,12 @@ export const milestoneStatusEnum = pgEnum("milestone_status", [
   "archived",
 ]);
 
+export const sprintStatusEnum = pgEnum("sprint_status", [
+  "planned",
+  "active",
+  "completed",
+]);
+
 export const issueRelationTypeEnum = pgEnum("issue_relation_type", [
   "blocks",
   "blocked_by",
@@ -109,33 +115,6 @@ export const workspaceMember = pgTable(
   }),
 );
 
-export const workspaceInvite = pgTable(
-  "workspace_invite",
-  {
-    id: text("id").primaryKey(),
-    workspaceId: text("workspace_id")
-      .notNull()
-      .references(() => workspace.id, { onDelete: "cascade" }),
-    email: text("email").notNull(),
-    role: workspaceRoleEnum("role").notNull().default("member"),
-    token: text("token").notNull(),
-    invitedBy: text("invited_by")
-      .notNull()
-      .references(() => user.id, { onDelete: "restrict" }),
-    acceptedAt: timestamp("accepted_at"),
-    expiresAt: timestamp("expires_at").notNull(),
-    createdAt: timestamp("created_at").notNull().defaultNow(),
-  },
-  (table) => ({
-    tokenUnique: uniqueIndex("workspace_invite_token_unique").on(table.token),
-    workspaceEmailIndex: index("workspace_invite_workspace_email_idx").on(
-      table.workspaceId,
-      table.email,
-    ),
-    expiresAtIndex: index("workspace_invite_expires_at_idx").on(table.expiresAt),
-  }),
-);
-
 export const team = pgTable(
   "team",
   {
@@ -184,6 +163,35 @@ export const teamMember = pgTable(
       table.userId,
     ),
     userIndex: index("team_member_user_idx").on(table.userId),
+  }),
+);
+
+export const workspaceInvite = pgTable(
+  "workspace_invite",
+  {
+    id: text("id").primaryKey(),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspace.id, { onDelete: "cascade" }),
+    email: text("email").notNull(),
+    role: workspaceRoleEnum("role").notNull().default("member"),
+    token: text("token").notNull(),
+    invitedBy: text("invited_by")
+      .notNull()
+      .references(() => user.id, { onDelete: "restrict" }),
+    teamId: text("team_id").references(() => team.id, { onDelete: "set null" }),
+    acceptedAt: timestamp("accepted_at"),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    tokenUnique: uniqueIndex("workspace_invite_token_unique").on(table.token),
+    workspaceEmailIndex: index("workspace_invite_workspace_email_idx").on(
+      table.workspaceId,
+      table.email,
+    ),
+    expiresAtIndex: index("workspace_invite_expires_at_idx").on(table.expiresAt),
+    teamIdIndex: index("workspace_invite_team_id_idx").on(table.teamId),
   }),
 );
 
@@ -251,6 +259,37 @@ export const milestone = pgTable(
   }),
 );
 
+export const sprint = pgTable(
+  "sprint",
+  {
+    id: text("id").primaryKey(),
+    workspaceId: text("workspace_id")
+      .notNull()
+      .references(() => workspace.id, { onDelete: "cascade" }),
+    projectId: text("project_id")
+      .notNull()
+      .references(() => project.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    goal: text("goal"),
+    startDate: date("start_date").notNull(),
+    endDate: date("end_date").notNull(),
+    status: sprintStatusEnum("status").notNull().default("planned"),
+    createdBy: text("created_by")
+      .notNull()
+      .references(() => user.id, { onDelete: "restrict" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    projectIndex: index("sprint_project_idx").on(table.projectId),
+    workspaceProjectDatesIndex: index("sprint_workspace_project_dates_idx").on(
+      table.workspaceId,
+      table.projectId,
+      table.startDate,
+    ),
+  }),
+);
+
 export const issueStatus = pgTable(
   "issue_status",
   {
@@ -309,6 +348,7 @@ export const issue = pgTable(
     creatorId: text("creator_id")
       .notNull()
       .references(() => user.id, { onDelete: "restrict" }),
+    startDate: date("start_date"),
     dueDate: date("due_date"),
     estimate: integer("estimate"),
     completedAt: timestamp("completed_at"),
@@ -332,6 +372,29 @@ export const issue = pgTable(
     projectIndex: index("issue_project_idx").on(table.projectId),
     milestoneIndex: index("issue_milestone_idx").on(table.milestoneId),
     parentIssueIndex: index("issue_parent_issue_idx").on(table.parentIssueId),
+  }),
+);
+
+export const sprintIssue = pgTable(
+  "sprint_issue",
+  {
+    id: text("id").primaryKey(),
+    sprintId: text("sprint_id")
+      .notNull()
+      .references(() => sprint.id, { onDelete: "cascade" }),
+    issueId: text("issue_id")
+      .notNull()
+      .references(() => issue.id, { onDelete: "cascade" }),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => ({
+    sprintIssueUnique: uniqueIndex("sprint_issue_issue_unique").on(table.issueId),
+    sprintIndex: index("sprint_issue_sprint_idx").on(table.sprintId),
+    sprintPositionIndex: index("sprint_issue_sprint_position_idx").on(
+      table.sprintId,
+      table.position,
+    ),
   }),
 );
 

@@ -5,7 +5,7 @@ import { and, asc, eq, isNull } from "drizzle-orm";
 
 import { auth } from "@/lib/auth/auth";
 import { db } from "@/lib/db/db";
-import { workspace, workspaceInvite, workspaceMember } from "@/lib/db/schema";
+import { team, workspace, workspaceInvite, workspaceMember } from "@/lib/db/schema";
 import { ModeToggle } from "@workspace/ui/components/mode-toggle";
 import { Button } from "@workspace/ui/components/button";
 import LogoutButton from "@/components/auth/logout-button-icon";
@@ -50,9 +50,11 @@ export default async function OnboardingPage() {
         role: workspaceInvite.role,
         expiresAt: workspaceInvite.expiresAt,
         workspaceName: workspace.name,
+        teamName: team.name,
       })
       .from(workspaceInvite)
       .innerJoin(workspace, eq(workspace.id, workspaceInvite.workspaceId))
+      .leftJoin(team, eq(team.id, workspaceInvite.teamId))
       .where(
         and(
           eq(workspaceInvite.email, session.user.email.toLowerCase()),
@@ -98,6 +100,7 @@ export default async function OnboardingPage() {
                   role: invite.role,
                   expiresAt: invite.expiresAt.toISOString(),
                   workspaceName: invite.workspaceName,
+                  teamName: invite.teamName,
                 }))}
               />
 

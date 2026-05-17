@@ -1,0 +1,22 @@
+---
+title: "payments"
+description: "> Status: Planned. APIs and UI are subject to change."
+---
+
+> **Status: Planned.** APIs and UI are subject to change.
+
+# Integration: Payments (Stripe & Razorpay)
+
+Goal: connect subscription lifecycle with workspace milestones so billing signals influence prioritization.
+
+## Scope ideas
+
+- Stripe Billing + Customer Portal for global audiences.
+- Razorpay Subscriptions for India-first GTM.
+- Unified webhook normalization layer mapping provider events → Partha `activity_event` records.
+
+## Compliance
+
+- Never store raw PAN/card data — rely on provider vaults.
+- Clearly separate PCI scope vs configuration metadata stored in Partha.
+

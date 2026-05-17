@@ -1,0 +1,80 @@
+name: CI Docs
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "apps/docs/**"
+      - "package.json"
+      - "bun.lock"
+      - "turbo.json"
+      - "packages/eslint-config/**"
+      - "packages/typescript-config/**"
+      - ".github/actions/**"
+      - ".github/workflows/ci-docs.yml"
+  pull_request:
+    paths:
+      - "apps/docs/**"
+      - "package.json"
+      - "bun.lock"
+      - "turbo.json"
+      - "packages/eslint-config/**"
+      - "packages/typescript-config/**"
+      - ".github/actions/**"
+      - ".github/workflows/ci-docs.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-docs-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.filter.outputs.docs }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            docs:
+              - apps/docs/**
+              - packages/eslint-config/**
+              - packages/typescript-config/**
+              - package.json
+              - bun.lock
+              - turbo.json
+              - .github/actions/**
+              - .github/workflows/ci-docs.yml
+
+  quality:
+    name: quality
+    needs: changes
+    if: needs.changes.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+
+    env:
+      SKIP_ENV_VALIDATION: "1"
+      NODE_ENV: test
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-monorepo
+        with:
+          turbo-token: ${{ secrets.TURBO_TOKEN }}
+          turbo-team: ${{ vars.TURBO_TEAM }}
+          turbo-cache-key-suffix: "-docs"
+
+      - name: Typecheck
+        run: bunx turbo run typecheck --filter=@partha/docs
+
+      - name: Lint
+        run: bunx turbo run lint --filter=@partha/docs
+
+      - name: Build
+        run: bunx turbo run build --filter=@partha/docs

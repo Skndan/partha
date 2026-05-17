@@ -1,0 +1,31 @@
+---
+title: "MCP client: OpenClaw"
+description: "Partha can serve OpenClaw-compatible agents over HTTP or stdio depending on how the runtime attaches MCP servers."
+---
+
+Partha can serve OpenClaw-compatible agents over HTTP or stdio depending on how the runtime attaches MCP servers.
+
+## HTTP transport
+
+Point your OpenClaw MCP transport configuration at Partha’s MCP endpoint—for production:
+
+```text
+https://your-domain.com/api/mcp
+```
+
+For local `@partha/app` development (`bun run dev:app`), use `http://localhost:4000/api/mcp`.
+
+Follow OpenClaw’s documentation for:
+
+- Where MCP servers are declared for your deployment mode.
+- How OAuth/browser prompts are surfaced to end users.
+
+## Stdio transport
+
+If OpenClaw supports attaching external MCP processes, reuse Partha’s stdio bootstrap (`bun run mcp:stdio`) together with a minted token ([dev-tokens.md](/docs/mcp/dev-tokens)).
+
+## Operational guidance
+
+- Prefer workspace-scoped tokens when multiple tenants share one integration host.
+- Rotate tokens frequently for unattended bots.
+

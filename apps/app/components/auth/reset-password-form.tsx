@@ -29,6 +29,8 @@ import { Loader, Terminal } from "lucide-react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+import { AuthBrandLogo } from "@/components/auth/auth-brand-logo";
+
 const ResetPasswordSchema = z
   .object({
     newPassword: z.string().min(1, "New password is required"),
@@ -94,9 +96,17 @@ export function ResetPasswordForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card>
-        <CardHeader>
+    <div
+      className={cn(
+        "flex min-h-svh w-full flex-col items-center justify-center gap-8 p-6",
+        className,
+      )}
+      {...props}
+    >
+      <AuthBrandLogo />
+
+      <Card className="w-full max-w-sm">
+        <CardHeader className="text-center">
           <CardTitle>Reset password</CardTitle>
           <CardDescription>Choose a new password for your account.</CardDescription>
         </CardHeader>

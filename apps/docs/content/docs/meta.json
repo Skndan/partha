@@ -1,0 +1,18 @@
+{
+  "title": "Documentation",
+  "pages": [
+    "index",
+    "getting-started",
+    "roadmap",
+    "---Concepts---",
+    "...concepts",
+    "---MCP---",
+    "...mcp",
+    "---Integrations---",
+    "...integrations",
+    "---Automations---",
+    "...automations",
+    "---Release---",
+    "...release"
+  ]
+}

@@ -1,8 +1,16 @@
 import { eq } from "drizzle-orm";
+import { UserRoundIcon } from "lucide-react";
 
 import { db } from "@/lib/db/db";
 import { teamMember, user } from "@/lib/db/schema";
 import { requireTeamContextFromKey } from "@/lib/workspaces/team-context";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty";
 
 export default async function TeamMembersPage({
   params,
@@ -31,28 +39,37 @@ export default async function TeamMembersPage({
         <p className="text-sm text-muted-foreground">People assigned to this team.</p>
       </div>
 
-      <div className="rounded-lg border">
-        <div className="border-b p-3 text-sm font-medium">Team members</div>
-        <div className="divide-y">
-          {members.map((member) => (
-            <div key={member.id} className="flex items-center justify-between p-3 text-sm">
-              <div>
-                <p className="font-medium">{member.name}</p>
-                <p className="text-muted-foreground">{member.email}</p>
+      {members.length > 0 ? (
+        <div className="rounded-lg border">
+          <div className="border-b p-3 text-sm font-medium">Team members</div>
+          <div className="divide-y">
+            {members.map((member) => (
+              <div key={member.id} className="flex items-center justify-between p-3 text-sm">
+                <div>
+                  <p className="font-medium">{member.name}</p>
+                  <p className="text-muted-foreground">{member.email}</p>
+                </div>
+                <div className="text-right">
+                  <p className="capitalize">{member.role}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Added {new Date(member.addedAt).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="capitalize">{member.role}</p>
-                <p className="text-xs text-muted-foreground">
-                  Added {new Date(member.addedAt).toLocaleDateString()}
-                </p>
-              </div>
-            </div>
-          ))}
-          {!members.length ? (
-            <p className="p-3 text-sm text-muted-foreground">No members assigned yet.</p>
-          ) : null}
+            ))}
+          </div>
         </div>
-      </div>
+      ) : (
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <UserRoundIcon />
+            </EmptyMedia>
+            <EmptyTitle>No team members yet</EmptyTitle>
+            <EmptyDescription>Invite or assign members to start collaborating as a team.</EmptyDescription>
+          </EmptyHeader>
+        </Empty>
+      )}
     </div>
   );
 }

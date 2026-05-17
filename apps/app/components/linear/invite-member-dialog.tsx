@@ -7,12 +7,23 @@ import { Button } from "@workspace/ui/components/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@workspace/ui/components/dialog";
 
-export function InviteMemberDialog({ slug }: { slug: string }) {
+export type InviteMemberTeamOption = { id: string; name: string; key: string };
+
+export function InviteMemberDialog({
+  slug,
+  workspaceName,
+  teams,
+}: {
+  slug: string;
+  workspaceName: string;
+  teams: InviteMemberTeamOption[];
+}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -24,8 +35,12 @@ export function InviteMemberDialog({ slug }: { slug: string }) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Invite member</DialogTitle>
+          <DialogDescription>
+            People you invite join <span className="font-medium text-foreground">{workspaceName}</span>{" "}
+            only when they accept. They will not get access to other workspaces.
+          </DialogDescription>
         </DialogHeader>
-        <InviteMemberForm slug={slug} className="border-0 p-0 shadow-none" />
+        <InviteMemberForm slug={slug} teams={teams} className="border-0 p-0 shadow-none" />
       </DialogContent>
     </Dialog>
   );

@@ -1,3 +1,6 @@
+import Link from "next/link";
+
+import { docsHref } from "@/lib/marketing/docs-url";
 import { Card, CardDescription, CardHeader, CardTitle } from "@workspace/ui/components/card";
 
 const PLACEHOLDER_ENTRIES = [
@@ -27,8 +30,11 @@ export function ChangelogPlaceholder() {
         </Card>
       ))}
       <p className="text-muted-foreground text-sm">
-        Detailed dated changelog entries will appear here once automated release notes ship; scope lives in{" "}
-        <code className="bg-muted rounded px-1 py-0.5 text-xs">docs/roadmap.md</code>.
+        Detailed dated changelog entries will appear here once automated release notes ship; scope lives in the{" "}
+        <Link href={docsHref("roadmap")} className="text-primary font-medium hover:underline">
+          product roadmap
+        </Link>
+        .
       </p>
     </div>
   );

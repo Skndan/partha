@@ -73,6 +73,79 @@ export async function sendVerificationEmail(
   });
 }
 
+export function isSmtpConfigured(): boolean {
+  return Boolean(
+    env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS && env.SMTP_FROM,
+  );
+}
+
+export async function sendWorkspaceInviteEmail({
+  to,
+  workspaceName,
+  workspaceSlug,
+  role,
+  teamName,
+  expiresAt,
+}: {
+  to: string;
+  workspaceName: string;
+  workspaceSlug: string;
+  role: string;
+  teamName: string | null;
+  expiresAt: Date;
+}) {
+  if (!isSmtpConfigured()) {
+    throw new Error("sendWorkspaceInviteEmail: SMTP is not configured.");
+  }
+
+  const onboardingUrl = `${env.NEXT_PUBLIC_URL}/onboarding`;
+  const teamLine = teamName
+    ? `Default team after you join: ${teamName}\n`
+    : "";
+
+  const text = [
+    `You have been invited to join the workspace "${workspaceName}" (${workspaceSlug}) on Partha.`,
+    "",
+    `Role: ${role}`,
+    teamLine,
+    `This invite expires on ${expiresAt.toLocaleString()}.`,
+    "",
+    `Sign in or sign up using this email address (${to}), then open:`,
+    onboardingUrl,
+    "",
+    "You will see your pending invite there and can accept it to access this workspace only.",
+  ].join("\n");
+
+  const html = [
+    `<p>You have been invited to join the workspace <strong>${escapeHtml(workspaceName)}</strong> (<code>${escapeHtml(workspaceSlug)}</code>) on Partha.</p>`,
+    `<p><strong>Role:</strong> ${escapeHtml(role)}</p>`,
+    teamName
+      ? `<p><strong>Default team after you join:</strong> ${escapeHtml(teamName)}</p>`
+      : "",
+    `<p>This invite expires on <strong>${escapeHtml(expiresAt.toLocaleString())}</strong>.</p>`,
+    `<p>Sign in or sign up using this email address, then open your pending invites:</p>`,
+    `<p><a href="${escapeHtml(onboardingUrl)}">${escapeHtml(onboardingUrl)}</a></p>`,
+    "<p>You will only get access to this workspace when you accept the invite.</p>",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  await sendEmail({
+    to,
+    subject: `Invitation to ${workspaceName}`,
+    text,
+    html,
+  });
+}
+
+function escapeHtml(value: string) {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;");
+}
+
 export async function sendResetPasswordEmail(
   {
     user,

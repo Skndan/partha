@@ -13,6 +13,7 @@ const PUBLIC_PREFIXES = [
   "/api/auth",
   "/api/mcp",
   "/.well-known",
+  "/public",
 ];
 
 function isPublicRoute(pathname: string) {
@@ -55,6 +56,9 @@ export default async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)",
+    /*
+     * Skip proxy for Next internals and static assets (URLs mirror files in /public).
+     */
+    "/((?!_next/static|_next/image|favicon.ico|robots.txt|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|txt|xml|json|webmanifest|woff2?|ttf|eot)$).*)",
   ],
 };

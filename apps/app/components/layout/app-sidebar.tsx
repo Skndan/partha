@@ -7,12 +7,7 @@ import {
   Briefcase,
   ChevronRight,
   FolderKanban,
-  Goal,
-  Inbox,
   LayoutDashboard,
-  Layers,
-  MoreHorizontal,
-  ScanSearch,
   Users,
   UsersRound,
 } from 'lucide-react'
@@ -32,8 +27,17 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarRail,
+  useSidebar,
 } from '@workspace/ui/components/sidebar'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@workspace/ui/components/collapsible'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@workspace/ui/components/dropdown-menu'
 import type { User } from '@/lib/db/db'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
@@ -136,11 +140,11 @@ function WorkspaceSidebarContent({
   const selectedTeamKey = teamFromPath ?? teams[0]?.key ?? ''
 
   const quickItems = [
-    {
-      title: 'Dashboard',
-      href: `/${activeSlug}`,
-      icon: LayoutDashboard,
-    },
+    // {
+    //   title: 'Dashboard',
+    //   href: `/${activeSlug}/dashboard`,
+    //   icon: LayoutDashboard,
+    // },
     // {
     //   title: 'My issues',
     //   href: selectedTeamKey
@@ -170,26 +174,26 @@ function WorkspaceSidebarContent({
 
   return (
     <>
-      <SidebarGroup>
+      {/* <SidebarGroup>
         <SidebarGroupContent>
           <SidebarMenu>
-            {quickItems.map((item) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === item.href || pathname.startsWith(`${item.href}/`)}
-                  tooltip={item.title}
-                >
-                  <Link href={item.href}>
-                    <item.icon />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {quickItems.map((item) => {
+              const isActive =
+                pathname === item.href || pathname.startsWith(`${item.href}/`)
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                    <Link href={item.href}>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )
+            })}
           </SidebarMenu>
         </SidebarGroupContent>
-      </SidebarGroup>
+      </SidebarGroup> */}
 
       <SidebarGroup>
         <SidebarGroupLabel>Workspace</SidebarGroupLabel>
@@ -222,60 +226,26 @@ function WorkspaceSidebarContent({
                 const issuesHref = `/${activeSlug}/team/${team.key}/issues`
                 const projectsHref = `/${activeSlug}/team/${team.key}/projects/all`
                 const viewsHref = `/${activeSlug}/team/${team.key}/all`
-                const teamIsActive =
-                  pathname.startsWith(issuesHref) ||
-                  pathname.startsWith(projectsHref) ||
-                  pathname.startsWith(viewsHref)
+                const issuesActive =
+                  pathname === issuesHref || pathname.startsWith(`${issuesHref}/`)
+                const projectsActive =
+                  pathname === projectsHref || pathname.startsWith(`${projectsHref}/`)
+                const viewsActive =
+                  pathname === viewsHref || pathname.startsWith(`${viewsHref}/`)
+                const teamIsActive = issuesActive || projectsActive || viewsActive
 
                 return (
-                  <Collapsible key={team.key} asChild defaultOpen={teamIsActive} className='group/collapsible'>
-                    <SidebarMenuItem>
-                      <CollapsibleTrigger asChild>
-                        <SidebarMenuButton tooltip={team.name} isActive={teamIsActive}>
-                          <Users />
-                          <span>{team.name}</span>
-                          <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 rtl:rotate-180' />
-                        </SidebarMenuButton>
-                      </CollapsibleTrigger>
-                      <CollapsibleContent className='CollapsibleContent'>
-                        <SidebarMenuSub>
-                          <SidebarMenuSubItem>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={pathname === issuesHref || pathname.startsWith(`${issuesHref}/`)}
-                            >
-                              <Link href={issuesHref}>
-                                <Briefcase />
-                                <span>Issues</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                          <SidebarMenuSubItem>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={pathname === projectsHref || pathname.startsWith(`${projectsHref}/`)}
-                            >
-                              <Link href={projectsHref}>
-                                <FolderKanban />
-                                <span>Projects</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                          <SidebarMenuSubItem>
-                            <SidebarMenuSubButton
-                              asChild
-                              isActive={pathname === viewsHref || pathname.startsWith(`${viewsHref}/`)}
-                            >
-                              <Link href={viewsHref}>
-                                <LayoutDashboard />
-                                <span>Views</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        </SidebarMenuSub>
-                      </CollapsibleContent>
-                    </SidebarMenuItem>
-                  </Collapsible>
+                  <TeamMenuItem
+                    key={team.key}
+                    team={team}
+                    issuesHref={issuesHref}
+                    projectsHref={projectsHref}
+                    viewsHref={viewsHref}
+                    issuesActive={issuesActive}
+                    projectsActive={projectsActive}
+                    viewsActive={viewsActive}
+                    teamIsActive={teamIsActive}
+                  />
                 )
               })
             ) : (
@@ -290,5 +260,107 @@ function WorkspaceSidebarContent({
         </SidebarGroupContent>
       </SidebarGroup>
     </>
+  )
+}
+
+function TeamMenuItem({
+  team,
+  issuesHref,
+  projectsHref,
+  viewsHref,
+  issuesActive,
+  projectsActive,
+  viewsActive,
+  teamIsActive,
+}: {
+  team: { key: string; name: string }
+  issuesHref: string
+  projectsHref: string
+  viewsHref: string
+  issuesActive: boolean
+  projectsActive: boolean
+  viewsActive: boolean
+  teamIsActive: boolean
+}) {
+  const { state, isMobile } = useSidebar()
+
+  if (state === 'collapsed' && !isMobile) {
+    return (
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton tooltip={team.name} isActive={teamIsActive}>
+              <Users />
+              <span>{team.name}</span>
+              <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90' />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side='right' align='start' sideOffset={4}>
+            <DropdownMenuLabel>{team.name}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <Link href={issuesHref} className={issuesActive ? 'bg-accent' : ''}>
+                <Briefcase />
+                <span>Issues</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={projectsHref} className={projectsActive ? 'bg-accent' : ''}>
+                <FolderKanban />
+                <span>Projects</span>
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href={viewsHref} className={viewsActive ? 'bg-accent' : ''}>
+                <LayoutDashboard />
+                <span>Views</span>
+              </Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    )
+  }
+
+  return (
+    <Collapsible asChild defaultOpen={teamIsActive} className='group/collapsible'>
+      <SidebarMenuItem>
+        <CollapsibleTrigger asChild>
+          <SidebarMenuButton tooltip={team.name} isActive={teamIsActive}>
+            <Users />
+            <span>{team.name}</span>
+            <ChevronRight className='ms-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90 rtl:rotate-180' />
+          </SidebarMenuButton>
+        </CollapsibleTrigger>
+        <CollapsibleContent className='CollapsibleContent'>
+          <SidebarMenuSub>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton asChild isActive={issuesActive}>
+                <Link href={issuesHref}>
+                  <Briefcase />
+                  <span>Issues</span>
+                </Link>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton asChild isActive={projectsActive}>
+                <Link href={projectsHref}>
+                  <FolderKanban />
+                  <span>Projects</span>
+                </Link>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+            <SidebarMenuSubItem>
+              <SidebarMenuSubButton asChild isActive={viewsActive}>
+                <Link href={viewsHref}>
+                  <LayoutDashboard />
+                  <span>Views</span>
+                </Link>
+              </SidebarMenuSubButton>
+            </SidebarMenuSubItem>
+          </SidebarMenuSub>
+        </CollapsibleContent>
+      </SidebarMenuItem>
+    </Collapsible>
   )
 }

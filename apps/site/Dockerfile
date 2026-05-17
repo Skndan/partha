@@ -18,6 +18,11 @@ RUN bun run build
 FROM node:20-slim AS runner
 WORKDIR /app
 
+ARG VERSION=0.0.0
+ARG REVISION=unknown
+LABEL org.opencontainers.image.version="${VERSION}"
+LABEL org.opencontainers.image.revision="${REVISION}"
+
 ENV NODE_ENV=production
 ENV PORT=4001
 ENV NEXT_TELEMETRY_DISABLED=1

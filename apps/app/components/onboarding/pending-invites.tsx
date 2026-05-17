@@ -10,7 +10,8 @@ import { Button } from "@workspace/ui/components/button";
 type PendingInvite = {
   token: string;
   workspaceName: string;
-  role: "owner" | "admin" | "member";
+  role: string;
+  teamName: string | null;
   expiresAt: string;
 };
 
@@ -52,8 +53,14 @@ export function PendingInvites({ invites }: { invites: PendingInvite[] }) {
             <div>
               <p className="font-medium">{invite.workspaceName}</p>
               <p className="text-xs text-muted-foreground">
-                Role: <span className="capitalize">{invite.role}</span> · Expires{" "}
-                {new Date(invite.expiresAt).toLocaleDateString()}
+                Role: <span className="capitalize">{invite.role}</span>
+                {invite.teamName ? (
+                  <>
+                    {" "}
+                    · Team: <span className="text-foreground">{invite.teamName}</span>
+                  </>
+                ) : null}{" "}
+                · Expires {new Date(invite.expiresAt).toLocaleDateString()}
               </p>
             </div>
             <Button

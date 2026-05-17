@@ -1,0 +1,49 @@
+name: Setup monorepo
+description: Bun install and Turborepo-friendly caches (run actions/checkout in the job first)
+inputs:
+  turbo-token:
+    description: Optional Turborepo remote cache token (TURBO_TOKEN)
+    required: false
+  turbo-team:
+    description: Optional Turborepo team slug (TURBO_TEAM)
+    required: false
+  turbo-cache-key-suffix:
+    description: Optional suffix for the .turbo cache key (e.g. app name)
+    required: false
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: "1.3.10"
+
+    - uses: actions/cache@v4
+      id: bun-cache
+      with:
+        path: |
+          ~/.bun/install/cache
+          node_modules
+        key: ${{ runner.os }}-bun-${{ hashFiles('bun.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-bun-
+
+    - uses: actions/cache@v4
+      id: turbo-cache
+      with:
+        path: .turbo
+        key: ${{ runner.os }}-turbo-${{ hashFiles('bun.lock', 'turbo.json') }}${{ inputs.turbo-cache-key-suffix }}
+        restore-keys: |
+          ${{ runner.os }}-turbo-${{ hashFiles('bun.lock', 'turbo.json') }}-
+          ${{ runner.os }}-turbo-
+
+    - name: Install dependencies
+      run: bun install --frozen-lockfile
+      shell: bash
+
+    - name: Disable Turborepo telemetry
+      run: bunx turbo telemetry disable
+      shell: bash
+      env:
+        TURBO_TOKEN: ${{ inputs.turbo-token }}
+        TURBO_TEAM: ${{ inputs.turbo-team }}

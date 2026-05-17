@@ -4,18 +4,12 @@ import { notFound } from "next/navigation";
 
 import { loadDataTableSearchParams, normalizeDataTableSearchParams } from "@/components/data-table";
 import { IssuePageContent } from "@/components/linear/issue-data-table/issue-page-content";
+import { ProjectPlanningLinks } from "@/components/linear/sprints/project-planning-links";
 import { db } from "@/lib/db/db";
-import {
-  issueLabel,
-  issueStatus,
-  milestone,
-  project,
-  team,
-  user,
-  workspaceMember,
-} from "@/lib/db/schema";
+import { milestone, project } from "@/lib/db/schema";
 import { requireWorkspaceContext } from "@/lib/workspaces/access";
-import { getProjectIssuesForDataTable } from "./_lib/query-project-issues";
+
+import { loadProjectIssuesShellData } from "./_lib/load-project-issues-shell-data";
 
 export default async function ProjectIssuesPage({
   params,
@@ -45,32 +39,21 @@ export default async function ProjectIssuesPage({
     pageSizeOptions: [10, 20, 30, 40, 50],
   });
 
-  const [tableData, statuses, milestones, members, teams, labels] = await Promise.all([
-    getProjectIssuesForDataTable(context.workspaceId, projectRow.id, normalizedSearchParams),
-    db
-      .select({ id: issueStatus.id, name: issueStatus.name })
-      .from(issueStatus)
-      .where(eq(issueStatus.workspaceId, context.workspaceId)),
+  const [shell, milestones] = await Promise.all([
+    loadProjectIssuesShellData({
+      workspaceId: context.workspaceId,
+      projectId: projectRow.id,
+      normalizedSearchParams,
+    }),
     db
       .select({ id: milestone.id, name: milestone.name })
       .from(milestone)
       .where(
         and(eq(milestone.workspaceId, context.workspaceId), eq(milestone.projectId, projectRow.id)),
       ),
-    db
-      .select({ id: user.id, name: user.name })
-      .from(workspaceMember)
-      .innerJoin(user, eq(user.id, workspaceMember.userId))
-      .where(eq(workspaceMember.workspaceId, context.workspaceId)),
-    db
-      .select({ id: team.id, key: team.key, name: team.name })
-      .from(team)
-      .where(eq(team.workspaceId, context.workspaceId)),
-    db
-      .select({ id: issueLabel.id, name: issueLabel.name, color: issueLabel.color })
-      .from(issueLabel)
-      .where(eq(issueLabel.workspaceId, context.workspaceId)),
   ]);
+
+  const { tableData, statuses, members, teams, labels } = shell;
 
   const teamById = new Map(teams.map((item) => [item.id, item]));
 
@@ -85,6 +68,9 @@ export default async function ProjectIssuesPage({
           {projectTeam ? (
             <p className="text-sm text-muted-foreground">Team: {projectTeam.name}</p>
           ) : null}
+          <div className="mt-3">
+            <ProjectPlanningLinks current="issues" projectId={projectRow.id} slug={slug} />
+          </div>
         </div>
         <Link
           className="text-sm text-muted-foreground underline-offset-4 hover:underline"

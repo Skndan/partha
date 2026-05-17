@@ -1,0 +1,15 @@
+{
+  "title": "Concepts",
+  "pages": [
+    "overview",
+    "workspaces",
+    "teams",
+    "projects",
+    "milestones",
+    "sprints",
+    "issues",
+    "members-and-invites",
+    "notifications-and-activity",
+    "realtime"
+  ]
+}
