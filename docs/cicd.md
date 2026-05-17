@@ -147,9 +147,11 @@ The files below are the source of truth in the repository. Reproduce or edit the
 
 ### `.github/actions/setup-monorepo/action.yml`
 
+CI jobs must run `actions/checkout@v4` **before** this local action (GitHub resolves `./.github/actions/*` from the checked-out tree).
+
 ```yaml
 name: Setup monorepo
-description: Checkout, Bun install, and Turborepo-friendly caches for the Partha monorepo
+description: Bun install and Turborepo-friendly caches (run actions/checkout in the job first)
 inputs:
   turbo-token:
     description: Optional Turborepo remote cache token (TURBO_TOKEN)
@@ -164,8 +166,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - uses: actions/checkout@v4
-
     - uses: oven-sh/setup-bun@v2
       with:
         bun-version: "1.3.10"

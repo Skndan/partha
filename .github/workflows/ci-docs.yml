@@ -62,6 +62,8 @@ jobs:
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
 
     steps:
+      - uses: actions/checkout@v4
+
       - uses: ./.github/actions/setup-monorepo
         with:
           turbo-token: ${{ secrets.TURBO_TOKEN }}
