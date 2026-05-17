@@ -2,8 +2,10 @@ import pluginNext from "@next/eslint-plugin-next";
 
 export default [
   {
+    ignores: [".next/**", "out/**", "node_modules/**", "next-env.d.ts"],
+  },
+  {
     name: "nextjs",
-    ignores: ["**/.next/**", "**/node_modules/**"],
     plugins: {
       "@next/next": pluginNext,
     },

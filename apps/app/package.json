@@ -14,7 +14,7 @@
     "db:push": "drizzle-kit push",
     "mcp:stdio": "tsx scripts/mcp-stdio.ts",
     "mcp:token": "tsx scripts/mcp-dev-token.ts",
-    "lint": "next lint",
+    "lint": "eslint",
     "test": "SKIP_ENV_VALIDATION=1 bun test lib/mcp/server.test.ts lib/mcp/oauth lib/mcp/oauth-discovery.test.ts lib/validators/mcp.test.ts lib/mcp/transports/http.test.ts",
     "test:integration": "SKIP_ENV_VALIDATION=1 RUN_INTEGRATION_TESTS=1 bun test lib/mcp/integration/oauth.test.ts lib/mcp/integration/tools.test.ts lib/mcp/integration/http-transport.test.ts lib/integration/product-api.test.ts",
     "mcp:smoke": "tsx scripts/mcp-smoke.ts",
