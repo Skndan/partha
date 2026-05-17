@@ -1,0 +1,106 @@
+name: CI App
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "apps/app/**"
+      - "packages/**"
+      - "package.json"
+      - "bun.lock"
+      - "turbo.json"
+      - ".github/actions/**"
+      - ".github/workflows/ci-app.yml"
+  pull_request:
+    paths:
+      - "apps/app/**"
+      - "packages/**"
+      - "package.json"
+      - "bun.lock"
+      - "turbo.json"
+      - ".github/actions/**"
+      - ".github/workflows/ci-app.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-app-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.filter.outputs.app }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            app:
+              - apps/app/**
+              - packages/ui/**
+              - packages/eslint-config/**
+              - packages/typescript-config/**
+              - package.json
+              - bun.lock
+              - turbo.json
+              - .github/actions/**
+              - .github/workflows/ci-app.yml
+
+  quality:
+    name: quality
+    needs: changes
+    if: needs.changes.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: partha
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d partha"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 20
+
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/partha
+      BETTER_AUTH_SECRET: ci-test-secret-ci-test-secret-ci-test-secret-12
+      BETTER_AUTH_URL: http://localhost:4000
+      NEXT_PUBLIC_URL: http://localhost:4000
+      SKIP_ENV_VALIDATION: "1"
+      RUN_INTEGRATION_TESTS: "1"
+      NODE_ENV: test
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    steps:
+      - uses: ./.github/actions/setup-monorepo
+        with:
+          turbo-token: ${{ secrets.TURBO_TOKEN }}
+          turbo-team: ${{ vars.TURBO_TEAM }}
+          turbo-cache-key-suffix: "-app"
+
+      - name: Push database schema
+        working-directory: apps/app
+        run: bun run db:push
+
+      - name: Typecheck
+        run: bunx turbo run typecheck --filter=@partha/app
+
+      - name: Lint
+        run: bunx turbo run lint --filter=@partha/app
+
+      - name: Unit tests
+        run: bunx turbo run test --filter=@partha/app
+
+      - name: Integration tests
+        run: bunx turbo run test:integration --filter=@partha/app
+
+      - name: Build
+        run: bunx turbo run build --filter=@partha/app

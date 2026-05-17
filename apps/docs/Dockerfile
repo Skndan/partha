@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.6
-# Build from monorepo root: docker build -f apps/app/Dockerfile .
+# Build from monorepo root: docker build -f apps/docs/Dockerfile .
 
 FROM oven/bun:1 AS deps
 WORKDIR /monorepo
@@ -10,12 +10,8 @@ COPY apps ./apps
 
 RUN bun install --frozen-lockfile || bun install
 
-FROM deps AS migrate
-WORKDIR /monorepo/apps/app
-CMD ["bun", "run", "db:migrate"]
-
 FROM deps AS builder
-WORKDIR /monorepo/apps/app
+WORKDIR /monorepo/apps/docs
 ENV SKIP_ENV_VALIDATION=1
 RUN bun run build
 
@@ -28,13 +24,13 @@ LABEL org.opencontainers.image.version="${VERSION}"
 LABEL org.opencontainers.image.revision="${REVISION}"
 
 ENV NODE_ENV=production
-ENV PORT=4000
+ENV PORT=4002
 ENV NEXT_TELEMETRY_DISABLED=1
 
-COPY --from=builder /monorepo/apps/app/.next/standalone ./
-COPY --from=builder /monorepo/apps/app/.next/static ./.next/static
-COPY --from=builder /monorepo/apps/app/public ./public
+COPY --from=builder /monorepo/apps/docs/.next/standalone ./
+COPY --from=builder /monorepo/apps/docs/.next/static ./.next/static
+COPY --from=builder /monorepo/apps/docs/public ./public
 
-EXPOSE 4000
+EXPOSE 4002
 
 CMD ["node", "server.js"]

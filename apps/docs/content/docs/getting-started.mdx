@@ -22,10 +22,19 @@ bun install
 ## Environment
 
 ```bash
-cp .env.example .env.local
+cp apps/app/.env.example apps/app/.env.local
 ```
 
-Minimum variables (see `.env.example` for full list):
+Optional, for custom marketing or docs URLs:
+
+```bash
+cp apps/site/.env.example apps/site/.env.local
+cp apps/docs/.env.example apps/docs/.env.local
+```
+
+Edit `apps/app/.env.local` and set at least `BETTER_AUTH_SECRET` (e.g. `openssl rand -base64 32`), `DATABASE_URL`, `BETTER_AUTH_URL`, and `NEXT_PUBLIC_URL`. A root `.env.local` is also loaded as a fallback when present.
+
+Minimum variables (see `apps/app/.env.example` for full list):
 
 | Variable | Purpose |
 |----------|---------|

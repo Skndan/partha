@@ -12,8 +12,8 @@ export const env = createEnv({
     BETTER_AUTH_SECRET: z.string(),
     BETTER_AUTH_URL: z.string().url(),
 
-    GOOGLE_CLIENT_ID: z.string(),
-    GOOGLE_CLIENT_SECRET: z.string(),
+    GOOGLE_CLIENT_ID: z.string().default(""),
+    GOOGLE_CLIENT_SECRET: z.string().default(""),
 
     SMTP_HOST: z.string().min(1).optional(),
     SMTP_PORT: z.coerce.number().int().positive().optional(),
@@ -21,8 +21,8 @@ export const env = createEnv({
     SMTP_PASS: z.string().min(1).optional(),
     SMTP_FROM: z.string().min(1).optional(),
 
-    R2_BUCKET_NAME: z.string().min(1),
-    R2_ENDPOINT: z.string().url(),
+    R2_BUCKET_NAME: z.string().min(1).optional(),
+    R2_ENDPOINT: z.string().url().optional(),
   },
   client: {
     NEXT_PUBLIC_URL: z.string().url(),
@@ -48,4 +48,11 @@ export const env = createEnv({
     R2_ENDPOINT: process.env.R2_ENDPOINT,
   },
   skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  emptyStringAsUndefined: true,
+  onValidationError: (issues) => {
+    if (process.env.NODE_ENV === "development") {
+      console.error("Invalid environment variables:", issues);
+    }
+    throw new Error("Invalid environment variables");
+  },
 });

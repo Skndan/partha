@@ -35,7 +35,13 @@ cd partha
 bun install
 ```
 
-Copy env and prepare the database as described in **[Getting started](http://localhost:4002/docs/getting-started)** (minimum: `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `NEXT_PUBLIC_URL`).
+Copy env and prepare the database as described in **[Getting started](http://localhost:4002/docs/getting-started)**:
+
+```bash
+cp .env.example apps/app/.env.local
+```
+
+Set at least `DATABASE_URL`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and `NEXT_PUBLIC_URL` in `apps/app/.env.local`.
 
 Run all apps via Turborepo:
 
@@ -55,13 +61,14 @@ bun run dev:docs  # @partha/docs → http://localhost:4002
 
 Product docs are served by **[@partha/docs](apps/docs)** (Fumadocs). Run `bun run dev:docs` and open [http://localhost:4002/docs](http://localhost:4002/docs). Edit content under [`apps/docs/content/docs/`](apps/docs/content/docs/).
 
-Contributor and deployment guides remain in [`docs/`](docs/) on GitHub: [contributing](docs/contributing.md), [security](docs/security.md), [deploy](docs/deploy.md).
+Contributor and deployment guides remain in [`docs/`](docs/) on GitHub: [contributing](docs/contributing.md), [security](docs/security.md), [deploy](docs/deploy.md), [CI/CD](docs/cicd.md).
 
 ## Contributing & security
 
 - **[Contributing](docs/contributing.md)** — commits, Bun-only deps, UI conventions, MCP doc updates
 - **[Security](docs/security.md)** — auth, sessions, MCP tokens
 - **[Deploy](docs/deploy.md)** — Docker / TLS deployment
+- **[CI/CD](docs/cicd.md)** — path-scoped GitHub Actions pipelines per app
 
 ## License
 

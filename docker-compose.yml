@@ -27,6 +27,7 @@ services:
     restart: "no"
 
   app:
+    image: ${APP_IMAGE:-partha-app:local}
     build:
       context: .
       dockerfile: apps/app/Dockerfile
@@ -41,6 +42,7 @@ services:
       - "4000"
 
   site:
+    image: ${SITE_IMAGE:-partha-site:local}
     build:
       context: .
       dockerfile: apps/site/Dockerfile
@@ -51,10 +53,22 @@ services:
     expose:
       - "4001"
 
+  docs:
+    image: ${DOCS_IMAGE:-partha-docs:local}
+    build:
+      context: .
+      dockerfile: apps/docs/Dockerfile
+      target: runner
+    restart: unless-stopped
+    expose:
+      - "4002"
+
   nginx:
     image: nginx:1.27
     depends_on:
       - app
+      - site
+      - docs
     restart: unless-stopped
     ports:
       - "80:80"

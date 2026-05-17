@@ -1,0 +1,77 @@
+name: CI Site
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - "apps/site/**"
+      - "packages/**"
+      - "package.json"
+      - "bun.lock"
+      - "turbo.json"
+      - ".github/actions/**"
+      - ".github/workflows/ci-site.yml"
+  pull_request:
+    paths:
+      - "apps/site/**"
+      - "packages/**"
+      - "package.json"
+      - "bun.lock"
+      - "turbo.json"
+      - ".github/actions/**"
+      - ".github/workflows/ci-site.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-site-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      should_run: ${{ steps.filter.outputs.site }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            site:
+              - apps/site/**
+              - packages/ui/**
+              - packages/eslint-config/**
+              - packages/typescript-config/**
+              - package.json
+              - bun.lock
+              - turbo.json
+              - .github/actions/**
+              - .github/workflows/ci-site.yml
+
+  quality:
+    name: quality
+    needs: changes
+    if: needs.changes.outputs.should_run == 'true'
+    runs-on: ubuntu-latest
+
+    env:
+      SKIP_ENV_VALIDATION: "1"
+      NODE_ENV: test
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ vars.TURBO_TEAM }}
+
+    steps:
+      - uses: ./.github/actions/setup-monorepo
+        with:
+          turbo-token: ${{ secrets.TURBO_TOKEN }}
+          turbo-team: ${{ vars.TURBO_TEAM }}
+          turbo-cache-key-suffix: "-site"
+
+      - name: Typecheck
+        run: bunx turbo run typecheck --filter=@partha/site
+
+      - name: Lint
+        run: bunx turbo run lint --filter=@partha/site
+
+      - name: Build
+        run: bunx turbo run build --filter=@partha/site
