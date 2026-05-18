@@ -1,0 +1,22 @@
+---
+description: MCP tool structure, authorization, validation, tests, and docs requirements
+globs: apps/app/lib/mcp/**,apps/app/lib/validators/mcp*,apps/app/app/api/mcp/**,apps/docs/content/docs/mcp/**,apps/site/lib/marketing/mcp-tools.ts
+alwaysApply: false
+---
+
+# MCP Tool Structure And Validation
+
+When adding or changing MCP tools, follow the existing structure in `apps/app/lib/mcp/server.ts`.
+
+- Define Zod input schemas near related tool schemas; use `.strict()` for object inputs.
+- Register tools in `createMcpServer()` beside the matching domain family.
+- Non-public tools must call `requireMcpAuth(extra)` before using request context.
+- Require the narrowest existing scope with `requireScope(extra?.authInfo?.scopes, "...")`.
+- Resolve workspace data with `resolveWorkspaceScope(auth.userId, auth.workspaceId, parsed.workspace_slug)`.
+- For workspace-owned write tools, get the role and call `requireWorkspaceWriteRole(role)` before mutation; missing membership must fail closed.
+- Validate every cross-entity ID belongs to `targetWorkspace.id` before reading or writing.
+- Return user-facing text plus compact `structuredContent` via `toolTextResult()`.
+- Update `apps/app/lib/mcp/server.test.ts`, and add integration coverage in `apps/app/lib/mcp/integration/tools.test.ts` for DB behavior.
+- Keep `apps/docs/content/docs/mcp/tools-reference.mdx` and `apps/site/lib/marketing/mcp-tools.ts` aligned with registered tools.
+
+Use existing scopes unless the full OAuth contract is updated: diagnostics public/authenticated, workspace data `workspace:*`, issue data `mcp:*`.
