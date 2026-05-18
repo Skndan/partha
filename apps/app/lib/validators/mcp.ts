@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const RedirectUriSchema = z
+export const RedirectUriSchema = z
   .string()
   .url()
   .refine((value) => {
@@ -46,4 +46,13 @@ export const TokenRequestSchema = z.object({
 export const RevokeRequestSchema = z.object({
   token: z.string().min(1),
   token_type_hint: z.enum(["access_token", "refresh_token"]).optional(),
+});
+
+export const ClientRegistrationSchema = z.object({
+  client_name: z.string().min(1).optional(),
+  grant_types: z.array(z.literal("authorization_code")).optional(),
+  response_types: z.array(z.literal("code")).optional(),
+  redirect_uris: z.array(RedirectUriSchema).min(1),
+  scope: z.string().optional(),
+  token_endpoint_auth_method: z.literal("none").optional(),
 });

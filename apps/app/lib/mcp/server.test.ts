@@ -1,11 +1,34 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, mock, test } from "bun:test";
 import { createMcpServer } from "@/lib/mcp/server";
+
+type MockLimitResult = Array<Record<string, unknown>>;
+
+let selectResults: MockLimitResult[] = [];
+
+const selectWhereMock = mock(() => ({
+  limit: mock(async () => selectResults.shift() ?? []),
+}));
+
+const selectFromMock = mock(() => ({
+  where: selectWhereMock,
+  innerJoin: mock(() => ({
+    where: selectWhereMock,
+  })),
+}));
+
+mock.module("@/lib/db/db", () => ({
+  db: {
+    select: mock(() => ({
+      from: selectFromMock,
+    })),
+  },
+}));
 
 type RegisteredTool = {
   handler: (input: unknown, extra?: unknown) => Promise<unknown>;
 };
 
-type McpServerWithTools = ReturnType<typeof createMcpServer> & {
+type McpServerWithTools = {
   _registeredTools: Record<string, RegisteredTool>;
 };
 
@@ -36,7 +59,7 @@ const expectedToolNames = [
 ];
 
 function getRegisteredTools() {
-  const server = createMcpServer() as McpServerWithTools;
+  const server = createMcpServer() as unknown as McpServerWithTools;
   return server._registeredTools;
 }
 
@@ -172,5 +195,34 @@ describe("mcp server scope enforcement", () => {
     const tools = getRegisteredTools();
     const response = await tools.whoami!.handler({}, createAuthExtra({ scopes: [] }));
     expect(response).toBeDefined();
+  });
+});
+
+describe("mcp server write role enforcement", () => {
+  const workspaceWriteTools = [
+    ["create_project", { workspace_slug: "demo", name: "Website", key: "WEB", status: "planned" }],
+    ["update_project", { workspace_slug: "demo", project_id: "project-1", name: "Website", status: "planned" }],
+    ["create_milestone", { workspace_slug: "demo", name: "Launch", status: "planned" }],
+    ["update_milestone", { workspace_slug: "demo", milestone_id: "milestone-1", name: "Launch" }],
+  ] as const;
+
+  test.each(workspaceWriteTools)("%s rejects member role before mutating", async (toolName, input) => {
+    const tools = getRegisteredTools();
+    selectResults = [
+      [{ id: "workspace-1", slug: "demo", name: "Demo" }],
+      [{ role: "member" }],
+    ];
+
+    await expect(tools[toolName]!.handler(input, createAuthExtra())).rejects.toThrow("Forbidden");
+  });
+
+  test.each(workspaceWriteTools)("%s rejects missing membership before mutating", async (toolName, input) => {
+    const tools = getRegisteredTools();
+    selectResults = [
+      [{ id: "workspace-1", slug: "demo", name: "Demo" }],
+      [],
+    ];
+
+    await expect(tools[toolName]!.handler(input, createAuthExtra())).rejects.toThrow("Forbidden");
   });
 });

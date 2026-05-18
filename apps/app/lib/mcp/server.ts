@@ -451,6 +451,12 @@ function normalizeLookupValue(value: string) {
   return value.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
+function requireWorkspaceWriteRole(role: string | null) {
+  if (role !== "owner" && role !== "admin") {
+    throw new Error("Forbidden");
+  }
+}
+
 function dedupeStrings(values: string[]) {
   const seen = new Set<string>();
   const deduped: string[] = [];
@@ -877,9 +883,7 @@ export function createMcpServer() {
         parsed.workspace_slug,
       );
       const role = await getWorkspaceMemberRole(auth.userId, targetWorkspace.id);
-      if (role === "member") {
-        throw new Error("Forbidden");
-      }
+      requireWorkspaceWriteRole(role);
 
       if (parsed.slug && parsed.slug !== targetWorkspace.slug) {
         const [slugConflict] = await db
@@ -1021,9 +1025,7 @@ export function createMcpServer() {
         parsed.workspace_slug,
       );
       const role = await getWorkspaceMemberRole(auth.userId, targetWorkspace.id);
-      if (role === "member") {
-        throw new Error("Forbidden");
-      }
+      requireWorkspaceWriteRole(role);
 
       const normalizedKey = parsed.key.toUpperCase();
       const [keyConflict] = await db
@@ -1086,9 +1088,7 @@ export function createMcpServer() {
         parsed.workspace_slug,
       );
       const role = await getWorkspaceMemberRole(auth.userId, targetWorkspace.id);
-      if (role === "member") {
-        throw new Error("Forbidden");
-      }
+      requireWorkspaceWriteRole(role);
 
       const [existingTeam] = await db
         .select({ id: team.id, name: team.name, key: team.key, description: team.description })
@@ -1263,6 +1263,8 @@ export function createMcpServer() {
         auth.workspaceId,
         parsed.workspace_slug,
       );
+      const role = await getWorkspaceMemberRole(auth.userId, targetWorkspace.id);
+      requireWorkspaceWriteRole(role);
       const normalizedKey = parsed.key.toUpperCase();
 
       const [keyConflict] = await db
@@ -1330,6 +1332,8 @@ export function createMcpServer() {
         auth.workspaceId,
         parsed.workspace_slug,
       );
+      const role = await getWorkspaceMemberRole(auth.userId, targetWorkspace.id);
+      requireWorkspaceWriteRole(role);
 
       const [existingProject] = await db
         .select({ id: project.id })
@@ -1494,6 +1498,8 @@ export function createMcpServer() {
         auth.workspaceId,
         parsed.workspace_slug,
       );
+      const role = await getWorkspaceMemberRole(auth.userId, targetWorkspace.id);
+      requireWorkspaceWriteRole(role);
 
       const [nameConflict] = await db
         .select({ id: milestone.id })
@@ -1558,6 +1564,8 @@ export function createMcpServer() {
         auth.workspaceId,
         parsed.workspace_slug,
       );
+      const role = await getWorkspaceMemberRole(auth.userId, targetWorkspace.id);
+      requireWorkspaceWriteRole(role);
 
       const [existingMilestone] = await db
         .select({

@@ -1,5 +1,9 @@
 import { describe, expect, test } from "bun:test";
-import { AuthorizeQuerySchema, TokenRequestSchema } from "@/lib/validators/mcp";
+import {
+  AuthorizeQuerySchema,
+  ClientRegistrationSchema,
+  TokenRequestSchema,
+} from "@/lib/validators/mcp";
 
 describe("mcp oauth validators", () => {
   test("accepts valid authorize query", () => {
@@ -61,5 +65,21 @@ describe("mcp oauth validators", () => {
     });
 
     expect(parsed.success).toBeTrue();
+  });
+
+  test("registration accepts cursor native callback redirect uri", () => {
+    const parsed = ClientRegistrationSchema.safeParse({
+      redirect_uris: ["cursor://anysphere.cursor-mcp/oauth/callback"],
+    });
+
+    expect(parsed.success).toBeTrue();
+  });
+
+  test("registration rejects non-loopback http redirect uri", () => {
+    const parsed = ClientRegistrationSchema.safeParse({
+      redirect_uris: ["http://example.com/callback"],
+    });
+
+    expect(parsed.success).toBeFalse();
   });
 });

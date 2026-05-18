@@ -28,11 +28,11 @@ Partha implements MCP OAuth 2.0 authorization-code flow with PKCE so hosted MCP 
 
 ## Redirect URI rules
 
-Production redirect URIs must be **HTTPS** or **localhost loopback HTTP** (`localhost`, `127.0.0.1`, `[::1]`).
+Production redirect URIs must be **HTTPS**, **localhost loopback HTTP** (`localhost`, `127.0.0.1`, `[::1]`), or a Cursor native callback (`cursor://...`).
 
 ## Registration
 
-`POST /api/mcp/oauth/register` helps bootstrap dynamic clients — inspect `app/api/mcp/oauth/register/route.ts` for redirect URI validation rules.
+`POST /api/mcp/oauth/register` helps bootstrap dynamic clients and uses the same redirect URI validation rules as authorize/token requests.
 
 ## Related
 
