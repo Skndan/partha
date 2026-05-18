@@ -18,6 +18,8 @@ Requirement
 
 Today, teams split this chain across Linear/Jira, GitHub, Notion/Confluence, Google Docs, test management tools, CI/CD dashboards, observability tools, analytics tools, support tools, social monitoring tools, marketing tools, and spreadsheets. Partha should not become a random bundle of those products. It should own the graph that connects them, remembers what happened, and gives humans and AI agents reliable operational context.
 
+This should feel like "git blame for the whole company" in the best sense: not a blame culture, but a source-linked evidence system that can explain how a production symptom connects back to the issue, requirement, PR, reviewer, workflow approval, testcase, release, deployment, fix, and final closure.
+
 This roadmap is intentionally ambitious, but it must be built in disciplined stages. The winning path is to deepen delivery traceability, release intelligence, incident correlation, engineering memory, requirement validation, architecture awareness, product impact analysis, and compliance evidence before expanding into lower-priority go-to-market automation. If teams trust Partha with releases, incidents, and audit trails, they can eventually trust it with more of the software execution system.
 
 ## Current Baseline
@@ -67,6 +69,8 @@ Every work item should eventually have a full history:
 - Revenue, retention, adoption, or marketing impact where measurable.
 
 The more complete this chain becomes, the harder it is for a competitor to replace Partha with a simple task board. Every new module should answer one question: does this strengthen the graph from requirement to planning to code to release to production to feedback to revenue? If yes, it belongs. If not, it is probably distraction.
+
+The strongest AI experience should start from incident traceability. When a production issue is queried, Partha should retrieve source-linked evidence across the operational graph and show the path from symptom to likely cause, owner, approval history, testcase coverage, remediation, deployment, and closure.
 
 ### 2. Humans Approve, AI Assists
 
@@ -167,6 +171,8 @@ Core capabilities:
 - Release readiness checklist before production movement.
 - AI release risk engine that flags risky PRs, insufficient testing, unstable modules, dependency risks, migration risks, and likely blast radius before deployment.
 - Release-aware incident intelligence that correlates production error spikes to releases, PRs, commits, approvers, impacted features, customer complaints, and rollback candidates.
+- Incident-first semantic RCA using Qdrant-backed retrieval over curated operational events, production symptoms, deployment signals, PR and review summaries, testcase evidence, workflow approvals, postmortems, and fix history.
+- Source-linked incident answers that explain the frontend-to-resolution chain without bypassing human approval or audit requirements.
 - Incident timeline, owner assignment, Slack or Teams integration, postmortem generation, and RCA graph generation.
 - Manual approval gates for production deployments.
 
@@ -204,6 +210,7 @@ Core capabilities:
 - Requirement-to-code validation that checks whether accepted BRDs were implemented, acceptance criteria were covered, edge cases were considered, and tests match the spec.
 - Architecture intelligence for services, APIs, dependencies, ownership, deployments, repositories, and affected systems.
 - Permanent operational memory graph for architecture decisions, incident learnings, deployment failures, rollback reasons, retrospectives, and release outcomes.
+- Approved BRDs, workflows, testcases, release notes, incident reports, and postmortems become retrievable evidence for incident-first RAG and future AI agents.
 - Approval workflows for BRDs, change requests, testcases, releases, branching strategies, PR merge readiness, and production movements.
 - Configurable workflow rules per workspace and project.
 - Multi-agent workspace model where QA, release, changelog, PM, support triage, incident analyst, and documentation agents operate only on structured and approved graph data.
@@ -589,6 +596,7 @@ Make Partha the command center for release readiness, deployment state, release 
 - Logs are visible from within Partha.
 - Release risk score explains missing tests, risky PRs, dependency changes, unstable modules, and migration risk before deployment.
 - Production error spikes can be correlated to releases, PRs, commits, approvers, services, and affected features.
+- Incident-first semantic RCA can retrieve likely related releases, PRs, owners, workflow approvals, testcase evidence, deployment events, and prior incident learnings from source-linked operational memory.
 - Rollback candidates and owners are suggested from release metadata and deployment history.
 - Production movement requires approval.
 
@@ -695,6 +703,24 @@ Logs should not become a full observability product immediately. The first versi
 - Who should own the response?
 - Is rollback safer than forward-fix?
 
+#### Incident-First Semantic RCA
+
+Production issue triage should become the first RAG use case, but it should operate on source-linked operational evidence rather than raw, unrestricted workspace data.
+
+When a user asks about a production issue, Partha should retrieve and rank:
+
+- Production symptoms, exception summaries, logs, and affected frontend paths.
+- Current and recent releases for the affected environment.
+- Included issues, commits, branches, pull requests, reviewers, and merge decisions.
+- Workflow approvals required before merge, release, deployment, rollback, or closure.
+- Testcase coverage, execution state, failed checks, and QA approval evidence.
+- Deployment events, rollback candidates, health checks, and owner metadata.
+- Prior incidents, postmortems, architecture decisions, and known risky modules with similar symptoms.
+
+Qdrant should power semantic retrieval over curated incident and operational memory summaries. OpenSearch should continue to support exact text search and filtering, ClickHouse should support event timelines and aggregate analysis, and Postgres should remain the canonical source for records, permissions, and audit trails.
+
+The user-facing answer should behave like a company-wide source-linked blame graph: it should explain the likely chain from frontend symptom to causing release or PR, show who approved each step, identify testcase gaps or passing evidence, and link to the fix, deployment, workflow approval, postmortem, and final completion state. It should avoid assigning personal blame unless the underlying evidence supports ownership in a neutral operational sense.
+
 ### Dependencies
 
 - GitHub commit and PR traceability.
@@ -705,6 +731,7 @@ Logs should not become a full observability product immediately. The first versi
 - Basic incident event model.
 - Service and environment ownership model.
 - Testcase and requirement evidence.
+- Qdrant-backed semantic memory index for curated incident, release, PR, approval, testcase, deployment, and postmortem evidence.
 
 ### Risks
 
@@ -713,6 +740,7 @@ Logs should not become a full observability product immediately. The first versi
 - Running remote commands must be tightly limited.
 - Risk scoring can create false confidence if it is not explainable.
 - Incident correlation can be noisy if release, service, and ownership mappings are weak.
+- RAG answers can hallucinate or overstate causality unless every claim is grounded in source links and permission-checked records.
 
 ### Success Metrics
 
@@ -722,6 +750,8 @@ Logs should not become a full observability product immediately. The first versi
 - Rollback target is visible after every deployment.
 - Release risk is visible before deployment, with concrete evidence behind the score.
 - A production incident can identify the most likely release, PR, owner, and rollback candidate.
+- At least 80 percent of production incidents include source-linked release, PR, owner, approval, testcase, deployment, and remediation evidence.
+- Mean time to identify the likely cause of a production incident decreases as the incident memory index matures.
 
 ## Q4: Workspace Wiki, AI Documentation, Testcases, And Approval Workflows
 
@@ -740,6 +770,7 @@ Create the knowledge, validation, architecture, and governance layer that lets h
 - Requirement-to-code validation checks whether implementation, tests, and release evidence match approved specs.
 - Architecture intelligence maps services, APIs, dependencies, ownership, repositories, and deployment topology.
 - AI workers operate on approved graph data instead of generic chat context.
+- Approved BRDs, workflow decisions, testcase evidence, incident reports, and postmortems feed the incident-first semantic memory layer.
 
 ### Feature Details
 
@@ -808,6 +839,8 @@ AI should help users:
 AI output should remain reviewable and traceable. Every AI-generated document section should be editable before approval.
 
 AI should not become random chat. It should act as a reasoning layer over approved operational graph data, with source links back to requirements, issues, PRs, releases, incidents, testcases, and architecture decisions.
+
+For incident-first RAG, AI should retrieve approved source material before drafting an answer. If approval, testcase, deployment, or closure evidence is missing, the answer should say so instead of filling the gap with assumptions.
 
 #### Testcase Generation
 
@@ -1573,6 +1606,8 @@ SSH and Docker control can create serious risk. The product must avoid becoming 
 
 AI-generated BRDs, testcases, changelogs, release risk scores, incident RCA drafts, architecture impact summaries, and marketing content can be wrong. AI should assist but not bypass review. Every AI output that affects product, release, incident response, compliance, or public communication needs human approval and source-linked evidence.
 
+Incident-first RAG adds a specific risk: a semantically similar prior event may not be causally related to the current outage. Qdrant retrieval should provide candidates and evidence, not final truth. Answers must cite source records, show confidence or uncertainty, and distinguish confirmed facts from hypotheses.
+
 ### Data Sprawl
 
 The roadmap touches many domains. Without clean data boundaries, the product can become difficult to maintain. Each module should have clear ownership and interfaces. The central graph should avoid becoming a junk drawer of raw events; it needs typed entities, confidence levels, source links, retention policy, and deduplication.
@@ -1665,6 +1700,9 @@ Deployment control, logs, incident records, analytics, AI docs, customer feedbac
 - Incidents linked to causing release or PR.
 - Mean time to identify likely causing release.
 - Rollback recommendations accepted or rejected with reason.
+- Incidents with source-linked semantic RCA evidence.
+- Incidents linked to approval, testcase, deployment, fix, and closure history.
+- Mean time to identify likely root cause from production symptom query.
 
 ### Wiki And QA
 
@@ -1675,6 +1713,7 @@ Deployment control, logs, incident records, analytics, AI docs, customer feedbac
 - Testcases linked to issues.
 - Requirements with test coverage.
 - Requirements with linked implementation evidence.
+- Approved testcases, workflows, and postmortems available as RAG evidence.
 - Spec compliance checks completed.
 - Architecture components mapped to repositories and services.
 - AI agent recommendations with source-linked evidence.

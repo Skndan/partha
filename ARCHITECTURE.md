@@ -37,6 +37,7 @@ The approved enterprise target is:
 - Queue and workflow workers for webhooks, AI jobs, imports, notifications, changelog generation, deployment orchestration, and other long-running work.
 - ClickHouse for high-volume analytics and event queries.
 - OpenSearch for full-text and cross-module search.
+- Qdrant for semantic memory and vector retrieval over curated incident, release, PR, testcase, approval, deployment, and postmortem evidence.
 - OpenTelemetry, metrics, structured logs, traces, and dashboards for operations.
 
 ## Current Architecture Audit
@@ -94,6 +95,7 @@ flowchart TB
   Integrations["Integrations And Webhooks"]
   Jobs["Jobs And Workflow Workers"]
   Search["OpenSearch"]
+  SemanticMemory["Qdrant Semantic Memory"]
   Analytics["ClickHouse"]
   Events["Kafka Or NATS"]
   Cache["Valkey"]
@@ -119,6 +121,7 @@ flowchart TB
   Events --> Jobs
   Jobs --> Db
   Jobs --> Search
+  Jobs --> SemanticMemory
   Jobs --> Analytics
   Events --> Realtime
   Realtime --> Cache
@@ -232,6 +235,7 @@ Jobs and workflow workers own asynchronous work:
 - Imports and exports.
 - Analytics projection updates.
 - Search indexing.
+- Semantic memory indexing.
 - Deployment orchestration.
 - Watchdog monitoring.
 - Scheduled maintenance.
@@ -254,6 +258,30 @@ OpenSearch should own full-text and cross-module search across:
 - Integration metadata.
 
 Postgres can continue to serve exact lookups and small filtered lists. OpenSearch should handle relevance, stemming, highlighting, multi-field search, and global search across modules.
+
+#### Semantic Memory And RAG
+
+Qdrant should own semantic retrieval for incident-first operational memory. It should index embeddings for curated, normalized summaries rather than raw unrestricted workspace data.
+
+Initial indexed evidence should include:
+
+- Production symptoms, exception summaries, affected frontend paths, and incident narratives.
+- Release summaries, deployment events, rollback reasons, and environment health signals.
+- Pull request summaries, review decisions, failed checks, merge decisions, and owner metadata.
+- Approved BRDs, testcases, workflow approvals, QA sign-off, and release readiness evidence.
+- Postmortems, incident learnings, architecture decisions, and known risky modules.
+
+Qdrant should not become the source of truth. Vector payloads should carry source references back to Postgres records, event offsets, OpenSearch documents, ClickHouse timeline rows, or integration source IDs. Retrieval results must be authorization-checked before being used in AI prompts or user-facing answers.
+
+The retrieval split should be explicit:
+
+- Postgres stores canonical records, relationships, permissions, workflow state, and audit trails.
+- Kafka or NATS carries committed business events and enables replayable indexing.
+- OpenSearch supports keyword search, filtering, highlighting, and exact text relevance.
+- Qdrant supports semantic similarity over event and document summaries.
+- ClickHouse supports high-volume event timelines, metrics, aggregates, and release-impact analysis.
+
+Incident-first RAG should combine these stores. A production issue query should retrieve semantically similar events from Qdrant, exact matching records from OpenSearch, timeline context from ClickHouse, and canonical authorization and relationship data from Postgres before drafting a source-linked RCA answer.
 
 #### Analytics
 
@@ -316,6 +344,7 @@ This domain owns:
 - Workspace context packages.
 - Project context summaries.
 - Issue and doc retrieval.
+- Incident-first RAG retrieval using Qdrant, OpenSearch, ClickHouse, and canonical Postgres relationships.
 - Prompt-safe redaction.
 - Tool permission checks.
 - AI audit logs.
@@ -375,6 +404,7 @@ sequenceDiagram
   participant Gateway as SSE Gateway
   participant Valkey
   participant Search as OpenSearch
+  participant Semantic as Qdrant
   participant Analytics as ClickHouse
 
   User->>WebBff: Update issue
@@ -382,6 +412,7 @@ sequenceDiagram
   WebBff->>Bus: Publish issue.status_changed
   Bus->>Worker: Process projections and side effects
   Worker->>Search: Update search index
+  Worker->>Semantic: Upsert semantic memory summary
   Worker->>Analytics: Append analytics event
   Bus->>Gateway: Fan out committed event
   Gateway->>Valkey: Read ephemeral routing and rate state
@@ -425,6 +456,23 @@ OpenSearch should index denormalized search documents built by workers from dura
 
 Search index documents should include tenant and access metadata so queries can enforce workspace and permission boundaries. Search results should still be authorization-checked before exposing sensitive content.
 
+### Semantic Memory Index
+
+Qdrant should index embedding vectors produced from approved, redacted, and normalized summaries. This keeps semantic retrieval useful while avoiding direct embedding of noisy raw logs, secrets, or unapproved private content.
+
+Each vector payload should include:
+
+- Workspace ID and tenant isolation metadata.
+- Project ID, repository ID, service ID, environment ID, or release ID when available.
+- Source entity type and source record ID.
+- Durable event name, event ID, event timestamp, and event schema version when the vector came from an event.
+- Visibility scope and permission metadata required for authorization filtering.
+- Embedding model name and version.
+- Source checksum or content version so stale vectors can be detected.
+- Retention class and deletion policy.
+
+Qdrant queries should always be scoped by tenant and permission metadata before source content is shown. Retrieved vector matches should be treated as candidates, not facts, until the canonical source records are loaded and checked.
+
 ## Load Handling And Scaling Strategy
 
 ### Primary Load Risks
@@ -438,6 +486,7 @@ The roadmap creates several different load profiles:
 - Webhooks: bursty ingestion, retries, and duplicate events.
 - AI jobs: slow, expensive, asynchronous work with approval requirements.
 - Search: cross-module indexing and relevance queries.
+- Semantic memory: embedding generation, vector upserts, hybrid retrieval, and source-grounded incident RCA answers.
 - Analytics: high-volume append and aggregation.
 - Deployment orchestration: sensitive long-running operations.
 - Public feedback and watchdog monitoring: external API limits and noisy input.
@@ -627,6 +676,7 @@ Required practices:
 - Workspace-aware cache keys.
 - Workspace-aware event schemas.
 - Workspace-aware search filters.
+- Workspace-aware Qdrant collections or payload filters with permission metadata.
 - Tenant fields in logs, metrics, traces, and audit records.
 - Tests for cross-tenant access failures.
 
@@ -851,15 +901,16 @@ Actions:
 
 ### Phase 5: Search And Analytics Scale
 
-Goal: prevent dashboards and global search from overloading transactional Postgres.
+Goal: prevent dashboards, global search, and incident-first retrieval from overloading transactional Postgres.
 
 Actions:
 
 - Introduce OpenSearch for full-text and cross-module search.
+- Introduce Qdrant for semantic memory and vector retrieval over curated incident, release, PR, testcase, approval, deployment, and postmortem evidence.
 - Introduce ClickHouse for event analytics and long-range dashboards.
-- Build indexing workers and analytics ingestion workers.
+- Build search indexing, semantic memory indexing, and analytics ingestion workers.
 - Add index freshness and ingestion lag metrics.
-- Keep authorization checks in search results.
+- Keep authorization checks in search and semantic retrieval results.
 
 ### Phase 6: Extract Selected TypeScript Services
 
@@ -872,6 +923,7 @@ Extraction candidates:
 - Collaboration service.
 - Jobs and Workflow service.
 - Search indexing service.
+- Semantic memory indexing and retrieval service.
 - Analytics ingestion service.
 - Deployment Agent control plane.
 - AI Context service.
@@ -915,6 +967,7 @@ Actions:
 | Workers                | Queue/workflow workers | Keeps slow and retryable work out of user-facing requests.                                         |
 | Analytics              | ClickHouse             | Optimized for high-volume event analytics and dashboard queries.                                   |
 | Search                 | OpenSearch             | Better fit for full-text, relevance, and cross-module search.                                      |
+| Semantic memory        | Qdrant                 | Supports incident-first vector retrieval over source-linked operational evidence.                  |
 | Default realtime       | SSE                    | Fits server-authoritative product updates with simpler operations.                                 |
 | Collaboration realtime | WebSockets             | Required only for bidirectional low-latency collaboration.                                         |
 | Observability          | OpenTelemetry          | Common instrumentation across web, services, workers, and integrations.                            |
@@ -925,6 +978,9 @@ Actions:
 - Do not use Postgres as a durable event bus.
 - Do not run webhook processing, AI jobs, deployment orchestration, or analytics aggregation inside user-facing requests.
 - Do not build dashboards directly on large transactional scans.
+- Do not use Qdrant as the source of truth for incidents, approvals, releases, testcases, or audit evidence.
+- Do not let RAG answers bypass authorization, source loading, redaction, or human approval gates.
+- Do not present semantic similarity as proven causality without source-linked evidence.
 - Do not use WebSockets for ordinary notifications that SSE can handle.
 - Do not introduce blanket E2EE where the product requires server-side search, AI, automation, and analytics.
 - Do not claim enterprise readiness without audit logs, tenant isolation tests, backup/restore testing, observability, rate limits, and incident runbooks.
@@ -940,4 +996,5 @@ The next architecture work should be validation-oriented:
 5. Decide the first Valkey use cases: rate limits, idempotency, and hot workspace metadata.
 6. Decide the first background worker use cases: webhooks, notifications, AI jobs, and indexing.
 7. Define the first durable domain events for issues, sprints, docs, and integrations.
-8. Add observability before major extraction so future decisions are based on evidence.
+8. Define the first semantic memory candidates for incident-first RAG: production symptoms, deployment events, PR summaries, approval evidence, testcase evidence, and postmortems.
+9. Add observability before major extraction so future decisions are based on evidence.
